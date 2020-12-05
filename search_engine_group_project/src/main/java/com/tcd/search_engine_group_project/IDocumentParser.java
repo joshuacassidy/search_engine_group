@@ -4,5 +4,5 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public interface IDocumentParser {
-    void parseDocument(Path documentFolder) throws IOException;
+    void parseDocument(Path documentFolder) throws Exception;
 }
