@@ -1,6 +1,5 @@
 package com.tcd.search_engine_group_project;
 
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
-//import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
@@ -29,8 +27,8 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 
 
-public class FederalRegister implements IDocumentParser {
-    
+public class LaTimes implements IDocumentParser {
+
     private Path documentsDirectory;
     private boolean createIndex;
     private Analyzer analyzer;
@@ -40,34 +38,34 @@ public class FederalRegister implements IDocumentParser {
     private String stopwordsPath;
 
 
-    public FederalRegister(String dataPath, String indexPath, boolean createIndex, String stopwordsPath) throws IOException {
+    public LaTimes(String dataPath, String indexPath, boolean createIndex, String stopwordsPath) throws IOException {
         this.indexPath= indexPath;
         this.stopwordsPath= stopwordsPath;
         this.createIndex = createIndex;
         this.documentsDirectory = Paths.get(dataPath);
         this.analyzer =  CustomAnalyzer.builder(Paths.get(dataPath))
-                    .withTokenizer("standard")
-                    .addTokenFilter("lowercase")
-                    // .addTokenFilter("stop", "ignoreCase", "true", "words", file, "format", "wordset")
-                    .addTokenFilter("trim")
-                    .addTokenFilter("patternReplace",
-                            "pattern", "^\\s\\.\\s$",
-                            "replace", "all",
-                            "replacement", " "
-                    )
-                    .addTokenFilter("snowballPorter")
-                    .build();
-        
+                .withTokenizer("standard")
+                .addTokenFilter("lowercase")
+                // .addTokenFilter("stop", "ignoreCase", "true", "words", file, "format", "wordset")
+                .addTokenFilter("trim")
+                .addTokenFilter("patternReplace",
+                        "pattern", "^\\s\\.\\s$",
+                        "replace", "all",
+                        "replacement", " "
+                )
+                .addTokenFilter("snowballPorter")
+                .build();
+
     }
 
 
     public void index() throws IOException {
         try {
-            
+
             this.indexWriterConfig = new IndexWriterConfig(this.analyzer);
             if(this.createIndex) {
                 this.indexWriterConfig.setOpenMode(OpenMode.CREATE);
-            } else{ 
+            } else{
                 this.indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
             }
 
@@ -76,12 +74,12 @@ public class FederalRegister implements IDocumentParser {
             boolean isDirectory = Files.isDirectory(this.documentsDirectory);
             SimpleFileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
                 @Override
-                    public FileVisitResult visitFile(Path document, BasicFileAttributes attrs) throws IOException {
-                        try {
-                            parseDocument(document);
-                        } catch (Exception e) {}
-                        return FileVisitResult.CONTINUE;
-                    }
+                public FileVisitResult visitFile(Path document, BasicFileAttributes attrs) throws IOException {
+                    try {
+                        parseDocument(document);
+                    } catch (Exception e) {}
+                    return FileVisitResult.CONTINUE;
+                }
             };
             if(isDirectory) {
                 Files.walkFileTree(this.documentsDirectory, fileVisitor);
@@ -95,10 +93,10 @@ public class FederalRegister implements IDocumentParser {
         } catch (IOException e) {
             System.out.println("Please specify a vaild collection of documents (can be a file or folder) using the using the -data and a location to store the index using the -index parameter");
             System.exit(1);
-       }
+        }
     }
-    
-    
+
+
     @Override
     public void parseDocument(Path file) throws IOException {
         BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
@@ -112,8 +110,8 @@ public class FederalRegister implements IDocumentParser {
         Elements links = htmldoc.select("DOC > TEXT");
         for (Element link : links) {
             String linkText = link.text();
-//            System.out.println(link);
-//            System.out.println(linkText);
+            //System.out.println(linkText);
+            //System.out.println("\n\n\n\n\n");
             org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
             Field field = new TextField("TEXT", linkText, Field.Store.YES);
             document.add(field);
@@ -121,13 +119,13 @@ public class FederalRegister implements IDocumentParser {
             writer.addDocument(document);
         }
 
-        
+
         reader.close();
 
     }
 
 
 
-   
+
 }
 

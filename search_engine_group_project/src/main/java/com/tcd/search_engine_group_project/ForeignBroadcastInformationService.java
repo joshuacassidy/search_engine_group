@@ -1,16 +1,8 @@
 package com.tcd.search_engine_group_project;
 
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-
-//import org.apache.lucene.document.Document;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
@@ -18,19 +10,20 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.custom.CustomAnalyzer;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 
-public class FederalRegister implements IDocumentParser {
-    
+public class ForeignBroadcastInformationService implements IDocumentParser {
+
     private Path documentsDirectory;
     private boolean createIndex;
     private Analyzer analyzer;
@@ -40,7 +33,7 @@ public class FederalRegister implements IDocumentParser {
     private String stopwordsPath;
 
 
-    public FederalRegister(String dataPath, String indexPath, boolean createIndex, String stopwordsPath) throws IOException {
+    public ForeignBroadcastInformationService(String dataPath, String indexPath, boolean createIndex, String stopwordsPath) throws IOException {
         this.indexPath= indexPath;
         this.stopwordsPath= stopwordsPath;
         this.createIndex = createIndex;
