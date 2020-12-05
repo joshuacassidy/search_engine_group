@@ -1,0 +1,7 @@
+search_engine_group_project/target/*
+search_engine_group_project/.idea/*
+search_engine_group_project/search_engine_group_project.iml
+DS_Store
+search_engine_group_project/datasets/f*
+search_engine_group_project/datasets/latimes
+search_engine_group_project/datasets/dtds
