@@ -9,7 +9,7 @@ public class App
     public static void main( String[] args ) throws Exception
     {
 
-        String dataPath = "datasets/Assignment Two/fr94/01";
+        String dataPath = "datasets/fr94/01";
         String indexPath = "index";
         boolean createIndex = true;
         String stopwordsPath = null;

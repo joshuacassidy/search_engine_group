@@ -115,8 +115,10 @@ public class FederalRegister implements IDocumentParser {
 //            System.out.println(link);
 //            System.out.println(linkText);
             org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
-            Field field = new TextField("TEXT", linkText, Field.Store.YES);
-            document.add(field);
+            Field textField = new TextField("TEXT", linkText, Field.Store.YES);
+            document.add(textField);
+            // Field textField = new TextField("TEXT", linkText, Field.Store.YES);
+            // document.add(textField);
 
             writer.addDocument(document);
         }
