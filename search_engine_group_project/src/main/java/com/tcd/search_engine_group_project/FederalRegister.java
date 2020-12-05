@@ -20,6 +20,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -27,6 +28,7 @@ import java.nio.file.Paths;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
+import org.apache.lucene.document.StringField;
 
 
 public class FederalRegister implements IDocumentParser {
@@ -101,30 +103,49 @@ public class FederalRegister implements IDocumentParser {
     
     @Override
     public void parseDocument(Path file) throws IOException {
-        BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
-        String doc = "";
-        for(String line = reader.readLine(); line != null; line = reader.readLine()) {
-            doc += line;
-        }
+        if(!("readfrcg".equals(file.getFileName().toString()) || "readmeft".equals(file.getFileName().toString()))) {
+            BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
+            File input = file.toFile();
+            Document htmldoc = Jsoup.parse(input, "UTF-8");
+            Elements links = htmldoc.select("DOC");
+            for (Element link : links) {
+                org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
+                Field textField = new TextField("text", link.select("TEXT").text(), Field.Store.YES);
+                document.add(textField);
+                Field titleField = new TextField("title", link.select("DOCTITLE").text(), Field.Store.YES);
+                document.add(titleField);
+                Field idField = new StringField("id", link.select("DOCNO").text(), Field.Store.YES);
+                document.add(idField);
+                
+                writer.addDocument(document);
+            }
+            
+            reader.close();
+       }
+//         BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
+//         StringBuilder doc = new StringBuilder();
+//         for(String line = reader.readLine(); line != null; line = reader.readLine()) {
+//             doc.append(line);
+//         }
 
-        Document htmldoc = Jsoup.parse(doc);
+//         Document htmldoc = Jsoup.parse(doc.toString());
 
-        Elements links = htmldoc.select("DOC > TEXT");
-        for (Element link : links) {
-            String linkText = link.text();
-//            System.out.println(link);
-//            System.out.println(linkText);
-            org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
-            Field textField = new TextField("TEXT", linkText, Field.Store.YES);
-            document.add(textField);
-            // Field textField = new TextField("TEXT", linkText, Field.Store.YES);
-            // document.add(textField);
+//         Elements links = htmldoc.select("DOC > TEXT");
+//         for (Element link : links) {
+//             String linkText = link.text();
+// //            System.out.println(link);
+// //            System.out.println(linkText);
+//             org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
+//             Field textField = new TextField("TEXT", linkText, Field.Store.YES);
+//             document.add(textField);
+//             // Field textField = new TextField("TEXT", linkText, Field.Store.YES);
+//             // document.add(textField);
 
-            writer.addDocument(document);
-        }
+//             writer.addDocument(document);
+//         }
 
         
-        reader.close();
+//         reader.close();
 
     }
 
