@@ -1,1 +1,22 @@
-# search_engine_group
+# Search Engine
+In this project we have a search engine that uses Lucene.
+## Building and Executing
+
+You can compile and run the java code from the 'search_engine_group_project' folder using the command:
+```sh
+mvn package && java -jar target/search_engine_group_project-1.0-SNAPSHOT.jar
+```
+
+## Evaluating
+
+You will be able to evaluate the results using trec_eval.
+from the main folder, type these commands to go into the right directory and compile trec_eval:
+```sh
+cd trec_eval-9.0.7
+make
+```
+
+To evaluate the software using trec eval, use this code:
+```sh
+./trec_eval <QRel_file> ../search_engine_group_project/output.txt
+```
