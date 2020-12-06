@@ -83,13 +83,11 @@ public class SearchIndex {
 
             Document htmldoc = Jsoup.parse(new File(queriesFile), "UTF-8");
             Elements links = htmldoc.select("top");
-            System.out.println(htmldoc);
             for (Element link : links) {
                 org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
                 String title = link.select("title").text();
                 String body = link.select("narr").text();
-                String queryNumber = link.select("num").text().replace(" Number: ", "");
-                
+                String queryNumber = link.select("num").first().text().replace("Number: ", "").split(" ")[0];
                 String query = "text:" + body + " OR title:" + title;
                 writeQuery(query, indexSearcher, parser, queryNumber, resultsFileWriter);
             }

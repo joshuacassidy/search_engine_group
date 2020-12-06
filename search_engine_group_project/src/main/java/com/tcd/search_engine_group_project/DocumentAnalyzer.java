@@ -21,7 +21,6 @@ public class DocumentAnalyzer {
                         "maxGramSize", "2" 
                     }
                 )        
-        // .withTokenizer("standard")
                 .addTokenFilter(EnglishPossessiveFilterFactory.class)
 
                 .addTokenFilter("trim")
