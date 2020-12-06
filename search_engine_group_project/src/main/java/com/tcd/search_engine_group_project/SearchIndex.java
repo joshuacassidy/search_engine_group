@@ -52,30 +52,18 @@ public class SearchIndex {
         documentCategoryScores = new HashMap<String, Float>();
         documentCategoryScores.put("title", 5.7f);
         documentCategoryScores.put("text", 3.5f);
-        // documentCategoryScores.put("Author", 0.5f);
-        // documentCategoryScores.put("Bibliography", 0.3f);
 
-        scoringApproaches = new HashMap<>();
-        scoringApproaches.put("0", new BM25Similarity());
-        scoringApproaches.put("1", new ClassicSimilarity());
-        scoringApproaches.put("2", new LMDirichletSimilarity());
-        scoringApproaches.put("3", new BooleanSimilarity());
-        scoringApproaches.put("4", new LMJelinekMercerSimilarity(0.7f));
-        scoringApproaches.put("5", new AxiomaticF3LOG(0.001f, 50));
-        scoringApproaches.put("6", new DFISimilarity(new IndependenceChiSquared()));
-        similarity = scoringApproaches.get("0");
-        if(scoringApproaches.get(scoringApproach) != null) {
-            similarity = scoringApproaches.get(scoringApproach);
-        }
+        similarity = new BM25Similarity();
     }
 
-    private void writeQuery(String queryText, IndexSearcher indexSearcher, MultiFieldQueryParser parser, int queryNumber, FileWriter resultsFileWriter) throws Exception {
+    private void writeQuery(String queryText, IndexSearcher indexSearcher, MultiFieldQueryParser parser, String queryNumber, FileWriter resultsFileWriter) throws Exception {
         Query query = parser.parse(QueryParser.escape(queryText.trim()));
         TopDocs results = indexSearcher.search(query, 1000);
         ScoreDoc[] hits = results.scoreDocs;
         for (int j = 0; j < Math.min(results.totalHits.value, 1000); j++) {
             org.apache.lucene.document.Document doc = indexSearcher.doc(hits[j].doc);
             String path = doc.get("id");
+
              if (path != null) {
                  resultsFileWriter.write(queryNumber +" 0 " + path + " " + (j+1) + " " + hits[j].score + " Any\n");
              }
@@ -123,11 +111,11 @@ public class SearchIndex {
         Document htmldoc = Jsoup.parse(new File(queriesFile), "UTF-8");
         Elements links = htmldoc.select("top");
         System.out.println(htmldoc);
-        int queryNumber = 1;
         for (Element link : links) {
             org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
             String title = link.select("title").text();
             String body = link.select("narr").text();
+            String queryNumber = link.select("num").text().replace(" Number: ");
             
             String query = "text:" + body + " OR title:" + title;
             writeQuery(query, indexSearcher, parser, queryNumber, resultsFileWriter);
