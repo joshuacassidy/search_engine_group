@@ -115,11 +115,10 @@ public class SearchIndex {
             org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
             String title = link.select("title").text();
             String body = link.select("narr").text();
-            String queryNumber = link.select("num").text().replace(" Number: ");
+            String queryNumber = link.select("num").text().replace(" Number: ", "");
             
             String query = "text:" + body + " OR title:" + title;
             writeQuery(query, indexSearcher, parser, queryNumber, resultsFileWriter);
-            queryNumber++;
             // System.out.println(link.select("desc"));
 
             // Field textField = new TextField("text", link.select("title").text(), Field.Store.YES);
