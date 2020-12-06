@@ -27,6 +27,7 @@ To evaluate the software using trec eval, use this code:
 2. Maven (Version 3.6.0)
 3. Bash (Version 3.2)
 
-## Note
-The output.txt contains the output of the search engine
-Remove the contents of the index folder before running as the hosted instance is limited on space
+## Notes
+1. The output.txt contains the output of the search engine
+2. Remove the contents of the index folder before running as the hosted instance is limited on space
+3. The output.txt uses the topic number in the first column, and the document number in the third column
