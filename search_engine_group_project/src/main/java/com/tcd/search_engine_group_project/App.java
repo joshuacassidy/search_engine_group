@@ -40,8 +40,8 @@ public class App {
         laTimesParser.indexAllDocumentsInFolder();
 
         analyzer.close();
-        indexSaveDirectory.close();
         indexWriter.close();
+        indexSaveDirectory.close();
     }
 
     public static void main( String[] args ) throws Exception
