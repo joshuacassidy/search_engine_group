@@ -29,3 +29,4 @@ To evaluate the software using trec eval, use this code:
 
 ## Note
 The output.txt contains the output of the search engine
+Remove the contents of the index folder before running as the hosted instance is limited on space
