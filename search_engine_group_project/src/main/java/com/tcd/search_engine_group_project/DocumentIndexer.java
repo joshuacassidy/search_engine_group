@@ -21,7 +21,7 @@ import java.util.Map;
 public class DocumentIndexer {
     private Path documentsDirectory;
     private IndexWriter indexWriter;
-    Map<String, String> documentFieldsMap;
+    private Map<String, String> documentFieldsMap;
 
     public DocumentIndexer(String documentsDirectory,
                            String indexFolder,

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jsoup.Jsoup;
-// import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -40,33 +39,28 @@ public class SearchIndex {
 
     private Analyzer analyzer;
     private String indexPath;
-    private Map<String, Similarity> scoringApproaches;
     private Similarity similarity;
     private HashMap<String, Float> documentCategoryScores;
-    private String stopwordsPath;
 
 
-    public SearchIndex(String indexPath, String scoringApproach, String stopwordsPath) {
-        this.stopwordsPath= stopwordsPath;
+    public SearchIndex(String indexPath) {
         this.indexPath = indexPath;
         documentCategoryScores = new HashMap<String, Float>();
-        documentCategoryScores.put("title", 5.7f);
-        documentCategoryScores.put("text", 3.5f);
-
+        documentCategoryScores.put("title", 2f);
+        documentCategoryScores.put("text", 1f);
         similarity = new BM25Similarity();
     }
 
     private void writeQuery(String queryText, IndexSearcher indexSearcher, MultiFieldQueryParser parser, String queryNumber, FileWriter resultsFileWriter) throws Exception {
         Query query = parser.parse(QueryParser.escape(queryText.trim()));
         TopDocs results = indexSearcher.search(query, 1000);
-        ScoreDoc[] hits = results.scoreDocs;
-        for (int j = 0; j < Math.min(results.totalHits.value, 1000); j++) {
-            org.apache.lucene.document.Document doc = indexSearcher.doc(hits[j].doc);
+        for (int i = 0; i < Math.min(results.totalHits.value, 1000); i++) {
+            org.apache.lucene.document.Document doc = indexSearcher.doc(results.scoreDocs[i].doc);
             String path = doc.get("id");
 
-             if (path != null) {
-                 resultsFileWriter.write(queryNumber +" 0 " + path + " " + (j+1) + " " + hits[j].score + " Any\n");
-             }
+            if (path != null) {
+                resultsFileWriter.write(queryNumber +" 0 " + path + " " + (i+1) + " " + results.scoreDocs[i].score + " Any\n");
+            }
         }
 
     }
@@ -74,20 +68,7 @@ public class SearchIndex {
     public void searchQueryFile(String queriesFile, String output) {
 
         try {
-            this.analyzer =  CustomAnalyzer.builder(
-                // Paths.get(dataPath)
-                )
-                    .withTokenizer("standard")
-                    .addTokenFilter("lowercase")
-                    // .addTokenFilter("stop", "ignoreCase", "true", "words", file, "format", "wordset")
-                    .addTokenFilter("trim")
-                    .addTokenFilter("patternReplace",
-                            "pattern", "^\\s\\.\\s$",
-                            "replace", "all",
-                            "replacement", " "
-                    )
-                    .addTokenFilter("snowballPorter")
-                    .build();
+            this.analyzer = DocumentAnalyzer.getCustomAnalyzer();
             IndexReader indexReader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
             indexSearcher.setSimilarity(similarity);
@@ -96,105 +77,28 @@ public class SearchIndex {
                     new String[]{"title", "text"},
                     analyzer, documentCategoryScores);
 
-            boolean isDirectory = Files.isDirectory(Paths.get(output));
-            FileWriter resultsFileWriter;
-            
-            if(isDirectory) {
-                resultsFileWriter = new FileWriter(Paths.get(output, "output.txt").toString());
-            } else {
-                resultsFileWriter = new FileWriter(Paths.get(output).toString());
-            }
-            
+            FileWriter resultsFileWriter = new FileWriter(Paths.get(output).toString());
             
 
 
-        Document htmldoc = Jsoup.parse(new File(queriesFile), "UTF-8");
-        Elements links = htmldoc.select("top");
-        System.out.println(htmldoc);
-        for (Element link : links) {
-            org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
-            String title = link.select("title").text();
-            String body = link.select("narr").text();
-            String queryNumber = link.select("num").text().replace(" Number: ");
-            
-            String query = "text:" + body + " OR title:" + title;
-            writeQuery(query, indexSearcher, parser, queryNumber, resultsFileWriter);
-            queryNumber++;
-            // System.out.println(link.select("desc"));
-
-            // Field textField = new TextField("text", link.select("title").text(), Field.Store.YES);
-            // document.add(textField);
-            // Field titleField = new TextField("title", link.select("narr").text(), Field.Store.YES);
-            // document.add(titleField);
-            // Field idField = new StringField("id", link.select("desc").text(), Field.Store.YES);
-            // document.add(idField);
-            
-            // writer.addDocument(document);
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-    //         BufferedReader reader = Files.newBufferedReader(Paths.get(queriesFile), StandardCharsets.UTF_8);
-    //         boolean firstQuery = true;
-    //         String queryText = "";
-    //         int queryNumber = 1;
-
-    //         for(String line = reader.readLine(); line != null; line = reader.readLine()) {
-    //             // if(line.startsWith(".I")) {
-    //             //     if(!firstQuery) {
-    //             //         // writeQuery(queryText, indexSearcher, parser, queryNumber, resultsFileWriter);
-    //             //         queryNumber++;
-    //             //     }
-    //             //     queryText = "";
-    //             //     firstQuery = false;
-    //             //     continue;
-    //             // }
-    //             // if(line.startsWith(".W")) {
-    //             //     continue;
-    //             // }
-    //             queryText += line;
-    //         }
-    //         // org.jsoup.nodes.Document doc = Jsoup.parse(queryText);
-    //         // System.out.println(queryText);
-
-
-    //         org.jsoup.nodes.Document htmldoc = Jsoup.parse(queryText);
-
-    //         Elements links = htmldoc.select("top");
-    //         for (Element link : links) {
-    //             String linkText = link.text();
-    // //            System.out.println(link);
-    //            System.out.println(link.select("title").text());
-    //            System.out.println(link.select("desc").text());
-    //            break;
+            Document htmldoc = Jsoup.parse(new File(queriesFile), "UTF-8");
+            Elements links = htmldoc.select("top");
+            System.out.println(htmldoc);
+            for (Element link : links) {
+                org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
+                String title = link.select("title").text();
+                String body = link.select("narr").text();
+                String queryNumber = link.select("num").text().replace(" Number: ", "");
                 
-    //             // Field textField = new TextField("TEXT", linkText, Field.Store.YES);
-    //             // document.add(textField);
-    //         }
-
-
-
-        //     writeQuery(queryText, indexSearcher, parser, queryNumber, resultsFileWriter);
+                String query = "text:" + body + " OR title:" + title;
+                writeQuery(query, indexSearcher, parser, queryNumber, resultsFileWriter);
+            }
 
             resultsFileWriter.close();
-//            reader.close();
             indexReader.close();
             analyzer.close();
         } catch (Exception e) {
-            System.out.println("Please specify a vaild queries and output using the -queriesFile and -output file parameters");
+            e.printStackTrace();
             System.exit(1);
         }
     

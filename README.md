@@ -18,5 +18,14 @@ make
 
 To evaluate the software using trec eval, use this code:
 ```sh
-./trec_eval <QRel_file> ../search_engine_group_project/output.txt
+./trec_eval <QRel_file> ../search_engine_group_project/output/output.txt
 ```
+
+
+## Project Dependencies:
+1. Java (Version 8 or greater)
+2. Maven (Version 3.6.0)
+3. Bash (Version 3.2)
+
+## Note
+The output.txt contains the output of the search engine

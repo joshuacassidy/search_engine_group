@@ -10,13 +10,11 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 public class App {
-    private static void indexDocuments() throws IOException {
+    private static void indexDocuments(String indexPath) throws IOException {
         String ftLocation = "datasets/ft";
         String frLocation = "datasets/fr94";
         String fbisLocation = "datasets/fbis";
         String laTimesLocation = "datasets/latimes";
-
-        String indexPath = "index";
 
         Analyzer analyzer = DocumentAnalyzer.getCustomAnalyzer();
 
@@ -44,17 +42,14 @@ public class App {
         indexSaveDirectory.close();
     }
 
-    public static void main( String[] args ) throws Exception
-    {
-        indexDocuments();
-
+    public static void main( String[] args ) throws Exception {
         String indexPath = "index";
-        String stopwordsPath = null;
-        
-        String outputFile = "";
+        String outputFile = "output/output.txt";
         String topicFile = "topics";
+        
+        indexDocuments(indexPath);
 
-        SearchIndex searchIndex = new SearchIndex(indexPath, "0", stopwordsPath);
+        SearchIndex searchIndex = new SearchIndex(indexPath);
         searchIndex.searchQueryFile(topicFile, outputFile);
     }
 }
