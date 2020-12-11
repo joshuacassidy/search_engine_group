@@ -6,8 +6,7 @@ import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -45,17 +44,34 @@ public class SearchIndex {
 
     public SearchIndex(String indexPath) {
         this.indexPath = indexPath;
-        documentCategoryScores = new HashMap<String, Float>();
-        documentCategoryScores.put("title", 2f);
+        documentCategoryScores = new HashMap<>();
+        documentCategoryScores.put("title", 0.1f);
         documentCategoryScores.put("text", 1f);
         similarity = new BM25Similarity();
     }
 
     private void writeQuery(String queryText, IndexSearcher indexSearcher, MultiFieldQueryParser parser, String queryNumber, FileWriter resultsFileWriter) throws Exception {
         Query query = parser.parse(QueryParser.escape(queryText.trim()));
-        TopDocs results = indexSearcher.search(query, 1000);
-        for (int i = 0; i < Math.min(results.totalHits.value, 1000); i++) {
+        TopDocs results = indexSearcher.search(query, 10000);
+        final Map<org.apache.lucene.document.Document, Float> scores = new HashMap<>();
+
+        List<org.apache.lucene.document.Document> documents = new ArrayList<>();
+        for (int i = 0; i < Math.min(results.totalHits.value, 10000); i++) {
             org.apache.lucene.document.Document doc = indexSearcher.doc(results.scoreDocs[i].doc);
+            documents.add(doc);
+            scores.put(doc, results.scoreDocs[i].score);
+        }
+
+        Doc2VecScorer doc2VecScorer = new Doc2VecScorer();
+        for(org.apache.lucene.document.Document doc : documents) {
+            float doc2VecScore = doc2VecScorer.score(queryText, doc.get("text"));
+            scores.put(doc, scores.get(doc) + doc2VecScore);
+        }
+
+        documents.sort(Comparator.comparing(scores::get).reversed());
+
+        for(int i=0; i<1000; i++) {
+            org.apache.lucene.document.Document doc = documents.get(i);
             String path = doc.get("id");
 
             if (path != null) {
@@ -84,11 +100,10 @@ public class SearchIndex {
             Document htmldoc = Jsoup.parse(new File(queriesFile), "UTF-8");
             Elements links = htmldoc.select("top");
             for (Element link : links) {
-                org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
                 String title = link.select("title").text();
-                String body = link.select("narr").text();
+                String body = link.select("narr").text() + link.select("desc").text();
                 String queryNumber = link.select("num").first().text().replace("Number: ", "").split(" ")[0];
-                String query = "text:" + body + " OR title:" + title;
+                String query = "text:" + (body + title) + " OR title:" + title;
                 writeQuery(query, indexSearcher, parser, queryNumber, resultsFileWriter);
             }
 
