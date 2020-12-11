@@ -14,13 +14,14 @@ public class DocumentAnalyzer {
         String stopwordsFile = "stop_words.txt";
 
         return CustomAnalyzer.builder(Paths.get(stopwordsFolder))
-                .withTokenizer(
-                    NGramTokenizerFactory.class, 
-                    new String[] { 
-                        "minGramSize", "1", 
-                        "maxGramSize", "2" 
-                    }
-                )        
+                // .withTokenizer(
+                //     NGramTokenizerFactory.class, 
+                //     new String[] { 
+                //         "minGramSize", "1", 
+                //         "maxGramSize", "3" 
+                //     }
+                // )
+                .withTokenizer("standard")
                 .addTokenFilter(EnglishPossessiveFilterFactory.class)
 
                 .addTokenFilter("trim")
