@@ -6,7 +6,7 @@ import java.util.Map;
 public class DocumentIndexerMaps {
     public static final Map<String, String> FT_MAP = new HashMap<String, String>() {{
         put("id", "DOCNO");
-        put("title", "title");
+        put("title", "headline");
         put("text", "text");
     }};
 
@@ -18,13 +18,13 @@ public class DocumentIndexerMaps {
 
     public static final Map<String, String> FBIS_MAP = new HashMap<String, String>() {{
         put("id", "DOCNO");
-        put("title", "title");
+        put("title", "ti");
         put("text", "text");
     }};
 
     public static final Map<String, String> LA_TIMES_MAP = new HashMap<String, String>() {{
         put("id", "DOCNO");
-        put("title", "title");
+        put("title", "headline");
         put("text", "text");
     }};
 }
