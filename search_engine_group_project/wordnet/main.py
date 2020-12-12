@@ -66,3 +66,5 @@ print(model.most_similar('a'))
 #                     return
 
 # run()
+from gensim.models import KeyedVectors
+KeyedVectors.load_word2vec_format("[filename]", binary=True, limit=1000000)
