@@ -52,11 +52,11 @@ public class SearchIndex {
 
     private void writeQuery(String queryText, IndexSearcher indexSearcher, MultiFieldQueryParser parser, String queryNumber, FileWriter resultsFileWriter) throws Exception {
         Query query = parser.parse(QueryParser.escape(queryText.trim()));
-        TopDocs results = indexSearcher.search(query, 10000);
+        TopDocs results = indexSearcher.search(query, 1000);
         final Map<org.apache.lucene.document.Document, Float> scores = new HashMap<>();
 
         List<org.apache.lucene.document.Document> documents = new ArrayList<>();
-        for (int i = 0; i < Math.min(results.totalHits.value, 10000); i++) {
+        for (int i = 0; i < Math.min(results.totalHits.value, 1000); i++) {
             org.apache.lucene.document.Document doc = indexSearcher.doc(results.scoreDocs[i].doc);
             documents.add(doc);
             scores.put(doc, results.scoreDocs[i].score);
@@ -96,15 +96,17 @@ public class SearchIndex {
             FileWriter resultsFileWriter = new FileWriter(Paths.get(output).toString());
             
 
-
+            int count = 0;
             Document htmldoc = Jsoup.parse(new File(queriesFile), "UTF-8");
             Elements links = htmldoc.select("top");
             for (Element link : links) {
+                System.out.println("Searching doc no" + count);
                 String title = link.select("title").text();
                 String body = link.select("narr").text() + link.select("desc").text();
                 String queryNumber = link.select("num").first().text().replace("Number: ", "").split(" ")[0];
                 String query = "text:" + (body + title) + " OR title:" + title;
                 writeQuery(query, indexSearcher, parser, queryNumber, resultsFileWriter);
+                count++;
             }
 
             resultsFileWriter.close();

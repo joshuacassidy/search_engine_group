@@ -39,7 +39,6 @@ public class DocumentIndexer {
 
     private void indexDocument(Path file) throws IOException {
         File input = file.toFile();
-
         Document htmlDoc = Jsoup.parse(input, "UTF-8");
         Elements links = htmlDoc.select("DOC");
 
@@ -51,7 +50,7 @@ public class DocumentIndexer {
                         link.select(documentFieldsMap.get(documentField)).text(), Field.Store.YES);
                 document.add(textField);
             }
-
+            
             indexWriter.addDocument(document);
         }
     }
@@ -62,12 +61,16 @@ public class DocumentIndexer {
             public FileVisitResult visitFile(Path document, BasicFileAttributes attrs) throws IOException {
                 if(document.getFileName().toString().endsWith(".txt") ||
                         document.getFileName().toString().equals("readchg") ||
-                        document.getFileName().toString().equals("readmefr"))
+                        document.getFileName().toString().equals("readmeft") ||
+                        document.getFileName().toString().equals("readmefr") ||
+                        document.getFileName().toString().equals("readfrcg"))
                     return FileVisitResult.CONTINUE;
                 indexDocument(document);
                 return FileVisitResult.CONTINUE;
             }
         };
+
+        System.out.println("Indexing doc no: " + this.documentsDirectory);
 
         Files.walkFileTree(this.documentsDirectory, fileVisitor);
     }
