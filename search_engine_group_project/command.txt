@@ -1,1 +1,4 @@
 mvn package && java -jar target/search_engine_group_project-1.0-SNAPSHOT.jar
+
+
+python3 flask-server/app.py
