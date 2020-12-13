@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.Map;
 
 public class DocumentIndexer {
@@ -30,7 +31,7 @@ public class DocumentIndexer {
         this.documentsDirectory = Paths.get(documentsDirectory);
 
         if(!Files.isDirectory(this.documentsDirectory)) {
-            throw new RuntimeException("Path " + indexFolder +"is not a Directory");
+            throw new RuntimeException("Path " + indexFolder +" is not a Directory");
         }
 
         this.indexWriter = indexWriter;
@@ -46,8 +47,22 @@ public class DocumentIndexer {
 
             org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
             for(String documentField : documentFieldsMap.keySet()) {
-                Field textField = new TextField(documentField,
-                        link.select(documentFieldsMap.get(documentField)).text(), Field.Store.YES);
+                
+                // String[] words = link.select(
+                //                 documentFieldsMap.get(documentField)
+                //                 ).text().split(" ");
+                
+                // int N=2000; // NUMBER OF WORDS THAT YOU NEED
+                // String nWords="";
+
+                // // concatenating number of words that you required
+                // for(int i=0; i<Math.min(N, words.length); i++){
+                //      nWords = nWords + " " + words[i] ;         
+                // }
+                
+                Field textField = new TextField(documentField, link.select(
+                    documentFieldsMap.get(documentField)
+                    ).text(), Field.Store.YES);
                 document.add(textField);
             }
             

@@ -51,5 +51,8 @@ public class App {
 
         SearchIndex searchIndex = new SearchIndex(indexPath);
         searchIndex.searchQueryFile(topicFile, outputFile);
+
+        
+
     }
 }
