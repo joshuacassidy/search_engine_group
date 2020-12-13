@@ -1,16 +1,53 @@
 from flask import Flask, Response, request,render_template
 import json
+import math
+import numpy as np
 from gensim.models import KeyedVectors
+from gensim.models.doc2vec import Doc2Vec
+
+from scipy import spatial
+
+doc2vec_model = Doc2Vec.load('doc2vec/doc2vec.bin')
+word2vec_model = KeyedVectors.load_word2vec_format('word2vec/word2vec.txt', binary=False)
 
 app = Flask(__name__)
-import math
-model = KeyedVectors.load_word2vec_format('word2vec/word2vec.txt', binary=False)
+
+def build_doc2vec_vectors(query_text, document_texts):
+    query_vector = doc2vec_model.infer_vector(query_text.split())
+    document_vectors = []
+    
+    for i in range(len(document_texts)):
+        document_vectors.append(doc2vec_model.infer_vector(document_texts[i]['doc_text'].split()))
+
+    return query_vector, document_vectors
+
+def get_doc2vec_similarity(query_vector, document_vector):
+    return 1 - spatial.distance.cosine(query_vector, document_vector)
+
+@app.route('/doc2vec', methods=['POST'])
+def get_doc2vec_vectors_similarities():
+    data = request.json
+    
+    query_text = data['query_text']
+    document_texts = data['document_texts']
+    
+    query_vector, document_vectors = build_doc2vec_vectors(query_text, document_texts)
+    
+    values = {'values': []}
+    for i in range(len(document_vectors)):
+        similarity = get_doc2vec_similarity(query_vector, document_vectors[i])
+        values['values'].append(similarity)
+    
+    result = json.dumps(values)
+    
+    return Response(result, mimetype='application/json', status='200')
 
 @app.route('/', methods=['GET'])
 def get_word():
     try:
         word = request.args.get('word')
-        return Response(json.dumps(model.most_similar(positive=[word])), mimetype='application/json', status='200')
+        response = word2vec_model.most_similar(positive=[word])
+        return Response(json.dumps(response), mimetype='application/json', status='200')
     except:
         return Response(json.dumps([]), mimetype='application/json', status='400')
 

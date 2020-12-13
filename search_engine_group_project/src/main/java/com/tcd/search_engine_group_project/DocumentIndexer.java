@@ -24,13 +24,12 @@ public class DocumentIndexer {
     private Map<String, String> documentFieldsMap;
 
     public DocumentIndexer(String documentsDirectory,
-                           String indexFolder,
                            IndexWriter indexWriter,
                            Map<String, String> documentFieldsMap) {
         this.documentsDirectory = Paths.get(documentsDirectory);
 
         if(!Files.isDirectory(this.documentsDirectory)) {
-            throw new RuntimeException("Path " + indexFolder +"is not a Directory");
+            throw new RuntimeException("Path " + documentsDirectory +"is not a Directory");
         }
 
         this.indexWriter = indexWriter;
