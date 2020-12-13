@@ -24,16 +24,16 @@ public class App {
         Directory indexSaveDirectory = FSDirectory.open(Paths.get(indexPath));
         IndexWriter indexWriter = new IndexWriter(indexSaveDirectory, indexWriterConfig);
 
-        DocumentIndexer ftParser = new DocumentIndexer(ftLocation, indexPath, indexWriter,
+        DocumentIndexer ftParser = new DocumentIndexer(ftLocation, indexWriter,
                 DocumentIndexerMaps.FT_MAP);
         ftParser.indexAllDocumentsInFolder();
-        DocumentIndexer frParser = new DocumentIndexer(frLocation, indexPath, indexWriter,
+        DocumentIndexer frParser = new DocumentIndexer(frLocation, indexWriter,
                 DocumentIndexerMaps.FR_MAP);
         frParser.indexAllDocumentsInFolder();
-        DocumentIndexer fbisParser = new DocumentIndexer(fbisLocation, indexPath, indexWriter,
+        DocumentIndexer fbisParser = new DocumentIndexer(fbisLocation, indexWriter,
                 DocumentIndexerMaps.FBIS_MAP);
         fbisParser.indexAllDocumentsInFolder();
-        DocumentIndexer laTimesParser = new DocumentIndexer(laTimesLocation, indexPath, indexWriter,
+        DocumentIndexer laTimesParser = new DocumentIndexer(laTimesLocation, indexWriter,
                 DocumentIndexerMaps.LA_TIMES_MAP);
         laTimesParser.indexAllDocumentsInFolder();
 

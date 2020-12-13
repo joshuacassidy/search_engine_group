@@ -1,10 +1,7 @@
 package com.tcd.search_engine_group_project;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -13,24 +10,15 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.search.similarities.AxiomaticF3LOG;
 import org.apache.lucene.search.similarities.BM25Similarity;
-import org.apache.lucene.search.similarities.BooleanSimilarity;
-import org.apache.lucene.search.similarities.ClassicSimilarity;
-import org.apache.lucene.search.similarities.DFISimilarity;
-import org.apache.lucene.search.similarities.IndependenceChiSquared;
-import org.apache.lucene.search.similarities.LMDirichletSimilarity;
-import org.apache.lucene.search.similarities.LMJelinekMercerSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.jsoup.nodes.Document;
 
@@ -52,20 +40,26 @@ public class SearchIndex {
 
     private void writeQuery(String queryText, IndexSearcher indexSearcher, MultiFieldQueryParser parser, String queryNumber, FileWriter resultsFileWriter) throws Exception {
         Query query = parser.parse(QueryParser.escape(queryText.trim()));
-        TopDocs results = indexSearcher.search(query, 1000);
+        TopDocs results = indexSearcher.search(query, 10000);
         final Map<org.apache.lucene.document.Document, Float> scores = new HashMap<>();
 
         List<org.apache.lucene.document.Document> documents = new ArrayList<>();
-        for (int i = 0; i < Math.min(results.totalHits.value, 1000); i++) {
+        List<String> texts = new ArrayList<>();
+        for (int i = 0; i < Math.min(results.totalHits.value, 2000); i++) {
             org.apache.lucene.document.Document doc = indexSearcher.doc(results.scoreDocs[i].doc);
             documents.add(doc);
+            texts.add(doc.get("text"));
             scores.put(doc, results.scoreDocs[i].score);
         }
 
-        Doc2VecScorer doc2VecScorer = new Doc2VecScorer();
-        for(org.apache.lucene.document.Document doc : documents) {
-            float doc2VecScore = doc2VecScorer.score(queryText, doc.get("text"));
-            scores.put(doc, scores.get(doc) + doc2VecScore);
+        PythonAPIManager pythonAPIManager = new PythonAPIManager();
+
+        // Calculating doc2Vec scores
+        //List<Float> doc2VecScores = pythonAPIManager.scoreTextsWithDoc2Vec(queryText, texts);
+        for (int i = 0; i < Math.min(results.totalHits.value, 2000); i++) {
+            org.apache.lucene.document.Document doc = documents.get(i);
+            float doc2VecScore = 0;//20 * doc2VecScores.get(i);
+            scores.put(doc, scores.get(doc) * 0.8f + doc2VecScore);
         }
 
         documents.sort(Comparator.comparing(scores::get).reversed());
