@@ -21,7 +21,7 @@ public class DocumentAnalyzer {
         // sargs.put("synonyms", "/Users/owner/Desktop/search_engine_group/syns.txt");
         sargs.put("ignoreCase", "true");
         
-        sargs.put("synonyms", "/Users/owner/Desktop/search_engine_group/search_engine_group_project/prolog/wn_s.pl");
+        sargs.put("synonyms", System.getProperty("user.dir") + "/prolog/wn_s.pl");
         sargs.put("format", "wordnet");
 
         return CustomAnalyzer.builder(Paths.get(stopwordsFolder))
