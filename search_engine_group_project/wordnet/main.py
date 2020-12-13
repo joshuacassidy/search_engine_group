@@ -1,70 +1,73 @@
-token_list = [
-  ['to', 'provide', 'early', 'intervention/early', 'childhood', 'special',
-   'education', 'services', 'to', 'eligible', 'children', 'and', 'their',
-   'families'],
-  ['essential', 'job', 'functions'],
-  ['participate', 'as', 'a', 'transdisciplinary', 'team', 'member', 'to',
-   'complete', 'educational', 'assessments', 'for']
-]
 
-from gensim.models.word2vec import Word2Vec
+# syns = open("words.txt","r") 
+# file_content = syns.readlines()
+# token_list = []
+# count = 0
 
-model = Word2Vec(
-    token_list,
-    workers=3,
-    size=300,
-    min_count=3,
-    window=6,
-    sample=1e-3)
+# for i in file_content:
+# 	token_list.append(i.split(" "))
+# 	if count > 30000:
+# 		break
+# 	count += 1
 
-model.init_sims(replace=True)
-model_name = "model"
-model.save(model_name)
+# from gensim.models.word2vec import Word2Vec
 
-print(model.most_similar('job'))
+# model = Word2Vec(
+#     token_list,
+#     workers=3,
+#     size=300,
+#     min_count=3,
+#     window=6,
+#     sample=1e-3)
 
+# syns.close()
 
-from gensim.models.word2vec import Word2Vec
-model_name = "model"
-model = Word2Vec.load(model_name)
-print(model.most_similar('a'))
-
-
-# import os
-# from bs4 import BeautifulSoup
-# def run():
-#     for root, dirs, files in os.walk("./datasets"):
-#         print(root)
-#         for file in files:
-#             if (
-#                 file.endswith(".dtd") or 
-#                 file.endswith(".txt") or 
-#                 file == "readchg" or 
-#                 file == "readmefr" or 
-#                 file == "ftdtd" or 
-#                 file == "fr94dtd" or
-#                 file == ".DS_Store" or
-#                 file == "group_member_dataset_info" or
-#                 file == "readmeft" or
-#                 file == "" or 
-#                 file == "readfrcg"
-            
-#             ):
-#                 continue
-
-#             if (
-#                 "fbis" in root or
-#                 "fr94" in root or
-#                 "ft" in root or
-#                 "latimes" in root
-#             ):
-#                 file_location = os.path.join(root, file)
-#                 if os.path.isfile(file_location):
-#                     with open(file_location, 'r') as f:
-#                         contents = f.read()
-#                         soup = BeautifulSoup(contents, 'html.parser')
-#                     return
-
-# run()
 from gensim.models import KeyedVectors
-KeyedVectors.load_word2vec_format("[filename]", binary=True, limit=1000000)
+model = KeyedVectors.load_word2vec_format('/Users/owner/Desktop/search_engine_group/GoogleNews-vectors-negative300.bin', binary=True, limit=20000)
+
+google_syns = open("google_syns.txt","w+") 
+
+stopwords = []
+with open("/Users/owner/Desktop/search_engine_group/search_engine_group_project/resources/stop_words.txt", "r") as f:
+	stopwords = f.read().split("\n")
+
+
+for i in model.wv.vocab.keys():
+	sims = str(i)
+	if i not in stopwords and not i.isnumeric() and i.strip().rstrip() != "":
+		similar_words = model.most_similar(positive=[i], topn=3, restrict_vocab=300)
+		has_syns = False
+		for sim in similar_words:
+			if sim[0] not in stopwords and not sim[0].isnumeric():
+				sims += "," + str(sim[0]).strip().rstrip()
+				has_syns = True
+		if has_syns:
+			google_syns.write(sims.lower()+"\n")
+google_syns.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# from gensim.models import KeyedVectors
+
+
+# model = KeyedVectors.load_word2vec_format("search_engine_group_project/word2vec/word2vec.txt", binary=False, limit=1000000)
+# syns = open("syns.txt","w+") 
+
+# for i in model.wv.vocab.keys():
+#   sims = str(i)
+#   for sim in model.most_similar(i):
+#     sims += "," + str(sim[0])
+#   syns.write(sims+"\n")
+# syns.close()
