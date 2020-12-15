@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.apache.lucene.analysis.custom.CustomAnalyzer;
+import org.apache.lucene.analysis.en.EnglishPossessiveFilterFactory;
 import org.apache.lucene.analysis.miscellaneous.LengthFilter;
 import org.apache.lucene.analysis.miscellaneous.RemoveDuplicatesTokenFilter;
 import org.apache.lucene.analysis.miscellaneous.TrimFilter;
@@ -17,6 +19,7 @@ import org.apache.lucene.analysis.shingle.ShingleAnalyzerWrapper;
 import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.tartarus.snowball.ext.EnglishStemmer;
+import org.apache.lucene.analysis.synonym.SynonymGraphFilterFactory;
 
 public class DocumentAnalyzer {
     public static Analyzer getCustomAnalyzer() throws IOException {
@@ -25,11 +28,11 @@ public class DocumentAnalyzer {
         Map<String, String> sargs = new HashMap<>();
         
         // sargs.put("synonyms", "/Users/owner/Desktop/search_engine_group/google_syns.txt");
-        // sargs.put("synonyms", "/Users/owner/Desktop/search_engine_group/syns.txt");
+        sargs.put("synonyms", "/Users/owner/Desktop/search_engine_group/custom_syns.txt");
         sargs.put("ignoreCase", "true");
         
-        sargs.put("synonyms", System.getProperty("user.dir") + "/prolog/wn_s.pl");
-        sargs.put("format", "wordnet");
+        // sargs.put("synonyms", "/Users/owner/Desktop/search_engine_group/search_engine_group_project/prolog/wn_s.pl");
+        // sargs.put("format", "wordnet");
 
         Set<String> stopWords;
         try (Stream<String> lines = Files.lines(Paths.get(stopwordsFolder + stopwordsFile))) {
@@ -37,7 +40,7 @@ public class DocumentAnalyzer {
         }
         CharArraySet stopWordsSet = CharArraySet.copy(stopWords);
 
-        return new StopwordAnalyzerBase() {
+        /*return new StopwordAnalyzerBase() {
             @Override
             protected TokenStreamComponents createComponents(String field) {
                 Tokenizer tokenizer = new StandardTokenizer();
@@ -51,10 +54,10 @@ public class DocumentAnalyzer {
 
                 return new TokenStreamComponents(tokenizer, filter);
             }
-        };
+        };*/
 
-        /*return CustomAnalyzer.builder(Paths.get(stopwordsFolder))
-                .withTokenizer()
+        return CustomAnalyzer.builder(Paths.get(stopwordsFolder))
+                //.withTokenizer()
                 // .withTokenizer(
                 //     NGramTokenizerFactory.class,
                 //     new String[] {
@@ -62,7 +65,7 @@ public class DocumentAnalyzer {
                 //         "maxGramSize", "3"
                 //     }
                 //     )
-                //.withTokenizer("standard")
+                .withTokenizer("standard")
                     .addTokenFilter(EnglishPossessiveFilterFactory.class)
                     .addTokenFilter("trim")
                     .addTokenFilter("lowercase")
@@ -75,7 +78,7 @@ public class DocumentAnalyzer {
                     //.addTokenFilter(SynonymFilterFactory.class, sargs)
                     //.addTokenFilter(SynonymGraphFilterFactory.class, sargs)
                     .addTokenFilter("snowballPorter")
-                    .build();*/
+                    .build();
     }
 
     public static Analyzer getCustomAnalyzerShingle() throws IOException {
