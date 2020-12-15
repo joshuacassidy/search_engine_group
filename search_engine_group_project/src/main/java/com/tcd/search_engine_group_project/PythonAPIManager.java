@@ -107,4 +107,14 @@ public class PythonAPIManager {
 
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root);
     }
+
+    public List<Float> scoreTextsWithZipf(String queryText, List<String> texts) throws Exception {
+        List<Float> result = new ArrayList<>();
+
+        String body = createDoc2VecBody(queryText, texts);
+        String response = getHTML("http://localhost:5000/zipf", body);
+        result.addAll(extractDoc2VecValues(response));
+
+        return result;
+    }
 }
