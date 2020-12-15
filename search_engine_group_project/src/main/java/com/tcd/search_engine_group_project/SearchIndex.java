@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.nio.file.Paths;
 import java.util.*;
 
+import org.apache.lucene.search.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -14,9 +15,6 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
@@ -31,6 +29,7 @@ public class SearchIndex {
 
 
     public SearchIndex(String indexPath) {
+        BooleanQuery.setMaxClauseCount(2_000_000);
         this.indexPath = indexPath;
         documentCategoryScores = new HashMap<>();
         documentCategoryScores.put("title", 0.1f);
@@ -40,12 +39,14 @@ public class SearchIndex {
 
     private void writeQuery(String queryText, IndexSearcher indexSearcher, MultiFieldQueryParser parser, String queryNumber, FileWriter resultsFileWriter) throws Exception {
         Query query = parser.parse(QueryParser.escape(queryText.trim()));
-        TopDocs results = indexSearcher.search(query, 10000);
+
+        TopDocs results = indexSearcher.search(query, 2500);
+
         final Map<org.apache.lucene.document.Document, Float> scores = new HashMap<>();
 
         List<org.apache.lucene.document.Document> documents = new ArrayList<>();
         List<String> texts = new ArrayList<>();
-        for (int i = 0; i < Math.min(results.totalHits.value, 2000); i++) {
+        for (int i = 0; i < Math.min(results.totalHits.value, 2500); i++) {
             org.apache.lucene.document.Document doc = indexSearcher.doc(results.scoreDocs[i].doc);
             documents.add(doc);
             texts.add(doc.get("text"));
@@ -55,11 +56,31 @@ public class SearchIndex {
         PythonAPIManager pythonAPIManager = new PythonAPIManager();
 
         // Calculating doc2Vec scores
-        //List<Float> doc2VecScores = pythonAPIManager.scoreTextsWithDoc2Vec(queryText, texts);
+        /*List<Float> doc2VecScores = pythonAPIManager.scoreTextsWithDoc2Vec(queryText, texts);
         for (int i = 0; i < Math.min(results.totalHits.value, 2000); i++) {
             org.apache.lucene.document.Document doc = documents.get(i);
-            float doc2VecScore = 0;//20 * doc2VecScores.get(i);
+            float doc2VecScore = 20 * doc2VecScores.get(i);
             scores.put(doc, scores.get(doc) * 0.8f + doc2VecScore);
+        }*/
+
+        // Calculating Zipf scores
+        List<Float> zipfScores = pythonAPIManager.scoreTextsWithZipf(queryText, texts);
+        for(int i = 0; i < Math.min(results.totalHits.value, 2500); i++) {
+            org.apache.lucene.document.Document doc = documents.get(i);
+            float zipfScore = zipfScores.get(i);
+
+            float zipfScore3 = Math.max((float) Math.log(zipfScore) - 10, 0);
+            zipfScore3 = 0.015f * (float) Math.pow(zipfScore3, 3);
+
+            float zipfScore4 = Math.max((float) Math.log(zipfScore), 0);
+            zipfScore4 = 0.00005f * (float) Math.pow(zipfScore4, 4);
+
+            float zipfScore5 = Math.max((float) Math.log(zipfScore), 0);
+            zipfScore5 = 0.0000025f * (float) Math.pow(zipfScore5, 5);
+
+            float finalZipfScore = zipfScore3 + zipfScore4 + zipfScore5;
+
+            scores.put(doc, scores.get(doc) + finalZipfScore);
         }
 
         documents.sort(Comparator.comparing(scores::get).reversed());
