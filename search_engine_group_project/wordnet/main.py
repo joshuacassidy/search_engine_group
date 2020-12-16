@@ -1,5 +1,4 @@
-
-syns = open("words.txt","r") 
+syns = open("wordnet/words.txt","r") 
 file_content = syns.readlines()
 token_list = []
 count = 0
@@ -25,17 +24,17 @@ model = Word2Vec(
 
 syns.close()
 
-custom_syns = open("custom_syns.txt","w+") 
+custom_syns = open("wordnet/custom_syns.txt","w+") 
 
 stopwords = []
-with open("/Users/owner/Desktop/search_engine_group/search_engine_group_project/resources/stop_words.txt", "r") as f:
+with open("resources/stop_words.txt", "r", encoding="utf-8") as f:
 	stopwords = f.read().split("\n")
 
 
 for i in model.wv.vocab.keys():
 	sims = str(i)
 	if i not in stopwords and not i.isnumeric() and i.strip().rstrip() != "":
-		similar_words = model.most_similar(positive=[i], topn=3, restrict_vocab=300)
+		similar_words = model.most_similar(positive=[i], topn=100, restrict_vocab=30000)
 		has_syns = False
 		for sim in similar_words:
 			if sim[0] not in stopwords and not sim[0].isnumeric():
@@ -44,10 +43,3 @@ for i in model.wv.vocab.keys():
 		if has_syns:
 			custom_syns.write(sims+"\n")
 custom_syns.close()
-
-
-
-
-
-
-

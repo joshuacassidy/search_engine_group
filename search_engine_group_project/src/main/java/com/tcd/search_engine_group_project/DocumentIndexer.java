@@ -16,17 +16,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DocumentIndexer {
     private Path documentsDirectory;
     private IndexWriter indexWriter;
-    private Map<String, String> documentFieldsMap;
+    private Map<String, List<String>> documentFieldsMap;
 
     public DocumentIndexer(String documentsDirectory,
                            IndexWriter indexWriter,
-                           Map<String, String> documentFieldsMap) {
+                           Map<String, List<String>> documentFieldsMap) {
         this.documentsDirectory = Paths.get(documentsDirectory);
 
         if(!Files.isDirectory(this.documentsDirectory)) {
@@ -43,30 +44,36 @@ public class DocumentIndexer {
         Elements links = htmlDoc.select("DOC");
 
         for (Element link : links) {
-
-            org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
-            for(String documentField : documentFieldsMap.keySet()) {
-                
-                // String[] words = link.select(
-                //                 documentFieldsMap.get(documentField)
-                //                 ).text().split(" ");
-                
-                // int N=2000;
-                // String nWords="";
-
-                // // concatenating number of words that you required
-                // for(int i=0; i<Math.min(N, words.length); i++){
-                //      nWords = nWords + " " + words[i] ;         
-                // }
-                
-                Field textField = new TextField(documentField, link.select(
-                    documentFieldsMap.get(documentField)
-                    ).text(), Field.Store.YES);
-                document.add(textField);
-            }
-            
-            indexWriter.addDocument(document);
+            examineDocument(link);
         }
+    }
+
+    private void examineDocument(Element doc) throws IOException {
+        org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
+        Map<String, String> luceneDocumentMapping = new HashMap<>();
+
+        for(String luceneDocumentField : documentFieldsMap.keySet()) {
+            List<String> textDocumentFields = documentFieldsMap.get(luceneDocumentField);
+
+            for(String textDocField : textDocumentFields) {
+                if(!luceneDocumentMapping.containsKey(luceneDocumentField)) {
+                    luceneDocumentMapping.put(luceneDocumentField, "");
+                }
+
+
+                String result = luceneDocumentMapping.get(luceneDocumentField);
+                result += doc.select(textDocField).text();
+                luceneDocumentMapping.put(luceneDocumentField, result);
+            }
+        }
+
+        for(String luceneDocumentField : documentFieldsMap.keySet()) {
+            Field textField = new TextField(luceneDocumentField, luceneDocumentMapping
+                    .get(luceneDocumentField), Field.Store.YES);
+            document.add(textField);
+        }
+
+        indexWriter.addDocument(document);
     }
 
     public void indexAllDocumentsInFolder() throws IOException {

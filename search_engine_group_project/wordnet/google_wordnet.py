@@ -23,12 +23,12 @@
 # syns.close()
 
 from gensim.models import KeyedVectors
-model = KeyedVectors.load_word2vec_format('/Users/owner/Desktop/search_engine_group/GoogleNews-vectors-negative300.bin', binary=True, limit=1000)
+model = KeyedVectors.load_word2vec_format('wordnet/word2vec.bin', binary=True, limit=10000000)
 
-google_syns = open("google_syns.txt","w+") 
+google_syns = open("wordnet/google_syns.txt","w+", encoding="utf-8") 
 
 stopwords = []
-with open("/Users/owner/Desktop/search_engine_group/search_engine_group_project/resources/stop_words.txt", "r") as f:
+with open("resources/stop_words.txt", "r", encoding="utf-8") as f:
 	stopwords = f.read().split("\n")
 
 
@@ -46,7 +46,6 @@ for i in model.wv.vocab.keys():
 		if has_syns:
 			google_syns.write(sims.lower()+"\n")
 google_syns.close()
-
 
 
 

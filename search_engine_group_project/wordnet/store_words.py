@@ -3,8 +3,8 @@ import re
 from bs4 import BeautifulSoup
 
 def run():
-	syns = open("words.txt","w+") 
-	for root, dirs, files in os.walk("./search_engine_group_project/datasets"):
+	syns = open("wordnet/words.txt","w+") 
+	for root, dirs, files in os.walk("datasets"):
 		print(root)
 		for file in files:
 			if (
