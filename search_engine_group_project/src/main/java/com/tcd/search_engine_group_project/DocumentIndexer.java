@@ -51,7 +51,7 @@ public class DocumentIndexer {
                 //                 documentFieldsMap.get(documentField)
                 //                 ).text().split(" ");
                 
-                // int N=2000; // NUMBER OF WORDS THAT YOU NEED
+                // int N=2000;
                 // String nWords="";
 
                 // // concatenating number of words that you required
