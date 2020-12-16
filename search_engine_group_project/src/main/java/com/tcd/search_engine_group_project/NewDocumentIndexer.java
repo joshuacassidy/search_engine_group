@@ -77,20 +77,7 @@ public class NewDocumentIndexer {
                 }
             }
 
-            //examineDocument(link);
-
-
-
-            org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
-            for(String documentField : documentFieldsMap.keySet()) {
-
-                Field textField = new TextField(documentField, link.select(
-                    documentFieldsMap.get(documentField).get(0)
-                    ).text(), Field.Store.YES);
-                document.add(textField);
-            }
-
-            indexWriter.addDocument(document);
+            examineDocument(link);
          }
     }
 
