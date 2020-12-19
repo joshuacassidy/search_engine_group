@@ -40,7 +40,7 @@ public class NewSearchIndex {
         this.indexPath = indexPath;
         documentCategoryScores = new HashMap<>();
         documentCategoryScores.put("title", 0.1f);
-        documentCategoryScores.put("text", 0.9f);
+        documentCategoryScores.put("text", 1.0f);
         
         similarity = new BM25Similarity();
     }

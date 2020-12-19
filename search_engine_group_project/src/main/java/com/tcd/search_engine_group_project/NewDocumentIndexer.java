@@ -13,6 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+<<<<<<< HEAD
+=======
+import java.util.HashMap;
+>>>>>>> 9af43c3455ac4847eb1be47c90c228bc89d41cef
 import java.util.List;
 import java.util.Map;
 import org.apache.lucene.document.Field;
@@ -50,7 +54,6 @@ public class NewDocumentIndexer {
         Elements links = htmlDoc.select("DOC");
 
         for (Element link : links) {
-
             if(file.toString().contains("fr94")){
                 link.select("ADDRESS").remove();
                 link.select("SIGNER").remove();
@@ -72,12 +75,12 @@ public class NewDocumentIndexer {
                         Node n = e.childNodes().get(i);
                         if(n instanceof Comment){
                             n.remove();
-                        } 
+                        }
                     }
                 }
-
             }
 
+<<<<<<< HEAD
             org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
             for(String documentField : documentFieldsMap.keySet()) {
                 
@@ -88,7 +91,38 @@ public class NewDocumentIndexer {
             }
             
             indexWriter.addDocument(document);
+=======
+            examineDocument(link);
+>>>>>>> 9af43c3455ac4847eb1be47c90c228bc89d41cef
          }
+    }
+
+    private void examineDocument(Element doc) throws IOException {
+        org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
+        Map<String, String> luceneDocumentMapping = new HashMap<>();
+
+        for(String luceneDocumentField : documentFieldsMap.keySet()) {
+            List<String> textDocumentFields = documentFieldsMap.get(luceneDocumentField);
+
+            for(String textDocField : textDocumentFields) {
+                if(!luceneDocumentMapping.containsKey(luceneDocumentField)) {
+                    luceneDocumentMapping.put(luceneDocumentField, "");
+                }
+
+
+                String result = luceneDocumentMapping.get(luceneDocumentField);
+                result += doc.select(textDocField).text();
+                luceneDocumentMapping.put(luceneDocumentField, result);
+            }
+        }
+
+        for(String luceneDocumentField : documentFieldsMap.keySet()) {
+            Field textField = new TextField(luceneDocumentField, luceneDocumentMapping
+                    .get(luceneDocumentField), Field.Store.YES);
+            document.add(textField);
+        }
+
+        indexWriter.addDocument(document);
     }
 
     public void indexAllDocumentsInFolder() throws IOException {

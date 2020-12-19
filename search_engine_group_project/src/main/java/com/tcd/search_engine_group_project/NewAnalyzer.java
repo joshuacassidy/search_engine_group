@@ -17,7 +17,11 @@ import org.apache.lucene.analysis.core.FlattenGraphFilter;
 import org.apache.lucene.analysis.en.EnglishPossessiveFilter;
 import org.apache.lucene.analysis.miscellaneous.TrimFilter;
 import org.apache.lucene.analysis.miscellaneous.WordDelimiterGraphFilter;
+<<<<<<< HEAD
 import org.apache.lucene.analysis.ngram.NGramTokenFilter;
+=======
+import org.apache.lucene.analysis.shingle.ShingleFilter;
+>>>>>>> 9af43c3455ac4847eb1be47c90c228bc89d41cef
 import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.tartarus.snowball.ext.EnglishStemmer;
@@ -59,12 +63,16 @@ public class NewAnalyzer extends StopwordAnalyzerBase {
             tokenStream = new EnglishPossessiveFilter(tokenStream);
             try {
                 List<String> lines = Files.readAllLines(
+<<<<<<< HEAD
                         Paths.get("/Users/owner/Desktop/updates/search_engine_group/search_engine_group_project/resources/stop_words.txt"),
                         Charset.defaultCharset()
+=======
+                        Paths.get(System.getProperty("user.dir") + "/resources/stop_words.txt")
+>>>>>>> 9af43c3455ac4847eb1be47c90c228bc89d41cef
                 );
                 tokenStream = new StopFilter(tokenStream, StopFilter.makeStopSet(lines,true));
             } catch (IOException ex) {
-                
+                ex.printStackTrace();
             }
             
             try {
@@ -96,6 +104,7 @@ public class NewAnalyzer extends StopwordAnalyzerBase {
 
 //            tokenStream = new NGramTokenFilter(tokenStream, 1, 2, false);
             tokenStream = new SnowballFilter(tokenStream, new EnglishStemmer());
+
             return new TokenStreamComponents(tokenizer, tokenStream);
 	}
 
