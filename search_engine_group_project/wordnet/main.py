@@ -11,12 +11,12 @@ words = {}
 
 for i in file_content:
 	token_list.append(i.split(" "))
-	if count == 0:
-		for word in model(i):
-			if word.tag_ == "NN" or word.tag_ == "NNS":
-				words["%s" % word] = "%s" % word
-	if count > 1000:
-		break
+	# if count == 0:
+	for word in model(i):
+		if word.tag_ == "NN" or word.tag_ == "NNS":
+			words["%s" % word] = "%s" % word
+	# if count > 1000:
+	# 	break
 	count += 1
 
 from gensim.models.word2vec import Word2Vec
