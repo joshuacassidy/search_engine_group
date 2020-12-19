@@ -15,8 +15,8 @@ for i in file_content:
 	for word in model(i):
 		if word.tag_ == "NN" or word.tag_ == "NNS":
 			words["%s" % word] = "%s" % word
-	if count > 1000:
-		break
+	# if count > 1000:
+	# 	break
 	count += 1
 
 from gensim.models.word2vec import Word2Vec
@@ -46,7 +46,7 @@ print(words)
 for i in model.wv.vocab.keys():
 	sims = str(i)
 	if i not in stopwords and not i.isnumeric() and i.strip().rstrip() != "" and i in words:
-		similar_words = model.most_similar(positive=[i], topn=10, restrict_vocab=30000)
+		similar_words = model.most_similar(positive=[i], topn=3, restrict_vocab=30000)
 		has_syns = False
 		for sim in similar_words:
 			if sim[0] not in stopwords and not sim[0].isnumeric() and sim[0] in words:
