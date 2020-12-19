@@ -15,8 +15,8 @@ for i in file_content:
 	for word in model(i):
 		if word.tag_ == "NN" or word.tag_ == "NNS":
 			words["%s" % word] = "%s" % word
-	# if count > 1000:
-	# 	break
+	if count > 1000:
+		break
 	count += 1
 
 from gensim.models.word2vec import Word2Vec
