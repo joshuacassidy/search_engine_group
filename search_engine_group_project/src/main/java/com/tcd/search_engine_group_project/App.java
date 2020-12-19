@@ -89,7 +89,6 @@ public class App {
         String topicFile = "topics";
 
         CommandLine cmd = buildCommandLineArguments(args);
-        retrieveSimilarity(cmd);
         indexDocumentsNew(indexPath, retrieveAnalyzer(cmd));
 
         NewSearchIndex searchIndex = new NewSearchIndex(indexPath, retrieveAnalyzer(cmd),
@@ -162,6 +161,12 @@ public class App {
             case "dfis":
                 System.out.println("Using DFIS Similarity");
                 return new DFISimilarity(new IndependenceChiSquared());
+            case "lmjm":
+                System.out.println("Using LMJelinekMercer Similarity");
+                return new LMJelinekMercerSimilarity(0.7f);
+            case "axiomatic":
+                System.out.println("Using Axiomatic Similarity");
+                return new AxiomaticF3LOG(0.5f, 10);
             case "bm25":
                 System.out.println("Using BM25 Similarity");
                 return new BM25Similarity();
