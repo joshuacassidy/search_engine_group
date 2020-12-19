@@ -13,10 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-<<<<<<< HEAD
-=======
 import java.util.HashMap;
->>>>>>> 9af43c3455ac4847eb1be47c90c228bc89d41cef
 import java.util.List;
 import java.util.Map;
 import org.apache.lucene.document.Field;
@@ -80,20 +77,7 @@ public class NewDocumentIndexer {
                 }
             }
 
-<<<<<<< HEAD
-            org.apache.lucene.document.Document document = new org.apache.lucene.document.Document();
-            for(String documentField : documentFieldsMap.keySet()) {
-                
-                Field textField = new TextField(documentField, link.select(
-                    documentFieldsMap.get(documentField).get(0)
-                    ).text(), Field.Store.YES);
-                document.add(textField);
-            }
-            
-            indexWriter.addDocument(document);
-=======
             examineDocument(link);
->>>>>>> 9af43c3455ac4847eb1be47c90c228bc89d41cef
          }
     }
 
