@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 public class App {
@@ -85,15 +86,22 @@ public class App {
 
     public static void main( String[] args ) throws Exception {
         String indexPath = "index";
-        String outputFile = "output/output.txt";
         String topicFile = "topics";
 
         CommandLine cmd = buildCommandLineArguments(args);
         retrieveSimilarity(cmd);
         indexDocumentsNew(indexPath, retrieveAnalyzer(cmd));
 
-        NewSearchIndex searchIndex = new NewSearchIndex(indexPath, retrieveAnalyzer(cmd), retrieveSimilarity(cmd));
-        searchIndex.searchQueryFile(topicFile, outputFile);
+        NewSearchIndex searchIndex = new NewSearchIndex(indexPath, retrieveAnalyzer(cmd),
+                retrieveSimilarity(cmd));
+        searchIndex.searchQueryFile(topicFile, retrieveOutputLocation(cmd));
+    }
+
+    private static String retrieveOutputLocation(CommandLine cmd) {
+        if(cmd.getOptionValue("output_location") == null) {
+            return "output/output.txt";
+        }
+        return cmd.getOptionValue("output_location");
     }
 
     private static Analyzer retrieveAnalyzer(CommandLine cmd) throws IOException {
@@ -166,6 +174,7 @@ public class App {
         Options options = new Options();
         options.addOption("analyzer", true, "analyzer choice");
         options.addOption("similarity", true, "similarity choice");
+        options.addOption("output_location", true, "output location");
 
         CommandLineParser parser = new DefaultParser();
 
