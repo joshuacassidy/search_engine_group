@@ -50,6 +50,11 @@ import org.apache.lucene.analysis.ngram.NGramTokenFilter;
 
 
 public class NewAnalyzer extends StopwordAnalyzerBase {
+    List<String> stopWords;
+
+    public NewAnalyzer(List<String> stopWords) {
+        this.stopWords = stopWords;
+    }
 
     @Override
 	protected TokenStreamComponents createComponents(String s) {
@@ -57,18 +62,11 @@ public class NewAnalyzer extends StopwordAnalyzerBase {
             TokenStream tokenStream = new LowerCaseFilter(tokenizer);
             tokenStream = new TrimFilter(tokenStream);
             tokenStream = new EnglishPossessiveFilter(tokenStream);
-            try {
-                List<String> lines = Files.readAllLines(
-                        Paths.get(System.getProperty("user.dir") + "/resources/stop_words.txt")
-                );
-                tokenStream = new StopFilter(tokenStream, StopFilter.makeStopSet(lines,true));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            
+            tokenStream = new StopFilter(tokenStream, StopFilter.makeStopSet(stopWords,true));
+
             try {
                 BufferedReader countries = new BufferedReader(
-                        new FileReader("resources/syns.txt")
+                        new FileReader(System.getProperty("user.dir") + "/resources/syns.txt")
                 );
 
                 SynonymMap.Builder builder = new SynonymMap.Builder(true);
@@ -83,7 +81,7 @@ public class NewAnalyzer extends StopwordAnalyzerBase {
                 SynonymMap synMap = builder.build();
                 tokenStream = new FlattenGraphFilter(
                 new WordDelimiterGraphFilter(
-                        tokenStream, 
+                        tokenStream,
                         WordDelimiterGraphFilter.GENERATE_NUMBER_PARTS,
                         null
                     )

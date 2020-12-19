@@ -36,13 +36,14 @@ public class NewSearchIndex {
     private Map<String, Float> documentCategoryScores;
 
 
-    public NewSearchIndex(String indexPath) {
+    public NewSearchIndex(String indexPath, Analyzer analyzer, Similarity similarity) {
         this.indexPath = indexPath;
         documentCategoryScores = new HashMap<>();
         documentCategoryScores.put("title", 0.1f);
         documentCategoryScores.put("text", 1.0f);
-        
-        similarity = new BM25Similarity();
+
+        this.analyzer = analyzer;
+        this.similarity = similarity;
     }
 
     public void searchQueryFile(String queriesFile, String output) throws ParseException {
@@ -50,7 +51,6 @@ public class NewSearchIndex {
             FileWriter resultsFileWriter = new FileWriter(Paths.get(output).toString());
             IndexReader indexReader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
 
-            analyzer = new NewAnalyzer();
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
             indexSearcher.setSimilarity(similarity);
 
@@ -83,7 +83,7 @@ public class NewSearchIndex {
                         .build();
 
 
-                ScoreDoc[] results = indexSearcher.search(booleanQuery, 1000).scoreDocs;
+                ScoreDoc[] results = indexSearcher.search(booleanQuery, 1500).scoreDocs;
 
                 for (int i = 0; i < results.length; i++) {
                     String documentId = indexSearcher.doc(results[i].doc).get("id");
