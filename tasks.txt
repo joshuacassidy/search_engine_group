@@ -14,14 +14,22 @@ Refactoring & modify code
 
 
 Josh Tasks
-POS
 Write Document
-More stop words + more synomns
 Diary
+
+// More stop words + more synomns
 
 Together:
 Deploy
 Readme
 Record time taken to compile on server
+
+Try:
+Nouns
+Verbs
+Adjectives
+Pronouns
+Nouns + Proper Nouns
+
 
 
