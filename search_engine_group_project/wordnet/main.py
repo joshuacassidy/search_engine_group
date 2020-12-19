@@ -38,7 +38,7 @@ for i in model.wv.vocab.keys():
 		has_syns = False
 		for sim in similar_words:
 			if sim[0] not in stopwords and not sim[0].isnumeric():
-				sims += "," + str(sim[0]).strip().rstrip()
+				sims += ":" + str(sim[0]).strip().rstrip()
 				has_syns = True
 		if has_syns:
 			custom_syns.write(sims+"\n")
