@@ -43,7 +43,7 @@ def run():
 						else:
 							bodys = soup.find_all("text")
 						for i in range(len(bodys)):
-							body = re.sub(' +', ' ', re.sub(r'[^A-Za-z0-9 ]+', '', bodys[i].get_text()).lower())
+							body = re.sub(' +', ' ', re.sub(r'[^A-Za-z0-9 ]+', ' ', bodys[i].get_text()).lower())
 							syns.write(body + "\n")
 
 	syns.close()
