@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 import java.util.Map;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
@@ -28,11 +29,11 @@ import org.jsoup.select.Elements;
 public class NewDocumentIndexer {
     private Path documentsDirectory;
     private IndexWriter indexWriter;
-    private Map<String, String> documentFieldsMap;
+    private Map<String, List<String>> documentFieldsMap;
 
     public NewDocumentIndexer(String documentsDirectory,
                            IndexWriter indexWriter,
-                           Map<String, String> documentFieldsMap) {
+                           Map<String, List<String>> documentFieldsMap) {
         this.documentsDirectory = Paths.get(documentsDirectory);
 
         if(!Files.isDirectory(this.documentsDirectory)) {
@@ -81,7 +82,7 @@ public class NewDocumentIndexer {
             for(String documentField : documentFieldsMap.keySet()) {
                 
                 Field textField = new TextField(documentField, link.select(
-                    documentFieldsMap.get(documentField)
+                    documentFieldsMap.get(documentField).get(0)
                     ).text(), Field.Store.YES);
                 document.add(textField);
             }

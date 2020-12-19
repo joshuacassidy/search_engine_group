@@ -79,7 +79,7 @@ public class App {
         String outputFile = "output/output.txt";
         String topicFile = "topics";
         
-        // indexDocumentsNew(indexPath);
+        indexDocumentsNew(indexPath);
 
         NewSearchIndex searchIndex = new NewSearchIndex(indexPath);
         searchIndex.searchQueryFile(topicFile, outputFile);
