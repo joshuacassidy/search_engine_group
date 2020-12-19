@@ -1,0 +1,27 @@
+Matteo Tasks:
+Write java to facilite different analyzers
+Write java to facilite different similiarites
+Write bash script to run all combinations store in different text files
+Plot a comparision of different configs for BM25 (or the best scoring)
+Experimentations with more stuff with lucene
+Refactoring & modify code
+
+
+
+5 ■ Ranking search results with word embeddings 146
+6 ■ Document embeddings for rankings and recommendations 170
+
+
+
+Josh Tasks
+POS
+Write Document
+More stop words + more synomns
+Diary
+
+Together:
+Deploy
+Readme
+Record time taken to compile on server
+
+
