@@ -89,8 +89,13 @@ public class App {
         String topicFile = "topics";
 
         CommandLine cmd = buildCommandLineArguments(args);
-        indexDocumentsNew(indexPath, retrieveAnalyzer(cmd));
+        if(cmd.hasOption("create_index")) {
+            System.out.println("Indexing\n");
+            indexDocumentsNew(indexPath, retrieveAnalyzer(cmd));
+            System.out.println();
+        }
 
+        System.out.println("Scoring\n");
         NewSearchIndex searchIndex = new NewSearchIndex(indexPath, retrieveAnalyzer(cmd),
                 retrieveSimilarity(cmd));
         searchIndex.searchQueryFile(topicFile, retrieveOutputLocation(cmd));
@@ -180,6 +185,7 @@ public class App {
         options.addOption("analyzer", true, "analyzer choice");
         options.addOption("similarity", true, "similarity choice");
         options.addOption("output_location", true, "output location");
+        options.addOption(new Option("create_index", "create index, boolean option"));
 
         CommandLineParser parser = new DefaultParser();
 
