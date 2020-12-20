@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class NewDocumentIndexer {
     private Path documentsDirectory;
     private IndexWriter indexWriter;
     private Map<String, List<String>> documentFieldsMap;
+    private List<String> fr94Removal;
 
     public NewDocumentIndexer(String documentsDirectory,
                            IndexWriter indexWriter,
@@ -43,6 +45,8 @@ public class NewDocumentIndexer {
 
         this.indexWriter = indexWriter;
         this.documentFieldsMap = documentFieldsMap;
+        this.fr94Removal = Arrays.asList("ADDRESS", "SIGNER", "SIGNJOB", "BILLING", "FRFILING", "DATE", "RINDOCK",
+                "usbureau", "agency", "further", "usdept", "table", "footnote", "footcite");
     }
 
     private void indexDocument(Path file) throws IOException {
@@ -52,20 +56,10 @@ public class NewDocumentIndexer {
 
         for (Element link : links) {
             if(file.toString().contains("fr94")){
-                link.select("ADDRESS").remove();
-                link.select("SIGNER").remove();
-                link.select("SIGNJOB").remove();
-                link.select("BILLING").remove();
-                link.select("FRFILING").remove();
-                link.select("DATE").remove();
-                link.select("RINDOCK").remove();
-                link.select("usbureau").remove();
-                link.select("agency").remove();
-                link.select("further").remove();
-                link.select("usdept").remove();
-                link.select("table").remove();
-                link.select("footnote").remove();
-                link.select("footcite").remove();
+
+                for(String toRemove : fr94Removal) {
+                    link.select(toRemove).remove();
+                }
 
                 for(Element e : link.select("TEXT").first().getAllElements()) {
                     for(int i = 0; i < e.childNodes().size(); i++) {
