@@ -66,7 +66,7 @@ public class NewAnalyzer extends StopwordAnalyzerBase {
 
             try {
                 BufferedReader countries = new BufferedReader(
-                        new FileReader(System.getProperty("user.dir") + "/resources/syns.txt")
+                        new FileReader("/Users/owner/Desktop/search_engine_group-master/search_engine_group/search_engine_group_project/wordnet/custom_syns_py_sample.txt")
                 );
 
                 SynonymMap.Builder builder = new SynonymMap.Builder(true);
