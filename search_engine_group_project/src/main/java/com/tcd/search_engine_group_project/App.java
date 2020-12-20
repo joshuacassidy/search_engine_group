@@ -64,7 +64,7 @@ public class App {
 
         System.out.println("Scoring\n");
         NewSearchIndex searchIndex = new NewSearchIndex(indexPath, retrieveAnalyzer(cmd),
-                retrieveSimilarity(cmd));
+                retrieveSimilarity(cmd), cmd.hasOption("use_word_frequencies"));
         searchIndex.searchQueryFile(topicFile, retrieveOutputLocation(cmd));
     }
 
@@ -153,6 +153,7 @@ public class App {
         options.addOption("similarity", true, "similarity choice");
         options.addOption("output_location", true, "output location");
         options.addOption(new Option("create_index", "create index, boolean option"));
+        options.addOption(new Option("use_word_frequencies", "rank the documents also with word frequencies"));
 
         CommandLineParser parser = new DefaultParser();
 
