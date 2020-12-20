@@ -8,8 +8,7 @@ from gensim.models.doc2vec import Doc2Vec
 
 from scipy import spatial
 
-#doc2vec_model = Doc2Vec.load('doc2vec/doc2vec.bin')
-#word2vec_model = KeyedVectors.load_word2vec_format('word2vec/word2vec.txt', binary=False)
+doc2vec_model = Doc2Vec.load('doc2vec/doc2vec.bin')
 
 app = Flask(__name__)
 
@@ -79,15 +78,6 @@ def get_zipf_similarities():
     result = json.dumps(values)
     
     return Response(result, mimetype='application/json', status='200')
-
-@app.route('/', methods=['GET'])
-def get_word():
-    try:
-        word = request.args.get('word')
-        response = word2vec_model.most_similar(positive=[word])
-        return Response(json.dumps(response), mimetype='application/json', status='200')
-    except:
-        return Response(json.dumps([]), mimetype='application/json', status='400')
 
 if __name__ == '__main__':
     app.run(debug=True)
