@@ -18,43 +18,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 public class App {
-    private static void indexDocuments(String indexPath) throws IOException {
-        String ftLocation = "datasets/ft";
-        String frLocation = "datasets/fr94";
-        String fbisLocation = "datasets/fbis";
-        String laTimesLocation = "datasets/latimes";
-
-        Analyzer analyzer = DocumentAnalyzer.getCustomAnalyzer();
-
-        IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
-        indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-
-        Directory indexSaveDirectory = FSDirectory.open(Paths.get(indexPath));
-        IndexWriter indexWriter = new IndexWriter(indexSaveDirectory, indexWriterConfig);
-
-        DocumentIndexer ftParser = new DocumentIndexer(ftLocation, indexWriter,
-                DocumentIndexerMaps.FT_MAP);
-        ftParser.indexAllDocumentsInFolder();
-        DocumentIndexer frParser = new DocumentIndexer(frLocation, indexWriter,
-                DocumentIndexerMaps.FR_MAP);
-        frParser.indexAllDocumentsInFolder();
-        DocumentIndexer fbisParser = new DocumentIndexer(fbisLocation, indexWriter,
-                DocumentIndexerMaps.FBIS_MAP);
-        fbisParser.indexAllDocumentsInFolder();
-        DocumentIndexer laTimesParser = new DocumentIndexer(laTimesLocation, indexWriter,
-                DocumentIndexerMaps.LA_TIMES_MAP);
-        laTimesParser.indexAllDocumentsInFolder();
-
-        analyzer.close();
-        indexWriter.close();
-        indexSaveDirectory.close();
-    }
-    
-    private static void indexDocumentsNew(String indexPath, Analyzer analyzer) throws IOException {
+    private static void indexDocuments(String indexPath, Analyzer analyzer) throws IOException {
         String ftLocation = "datasets/ft";
         String frLocation = "datasets/fr94";
         String fbisLocation = "datasets/fbis";
@@ -89,8 +56,13 @@ public class App {
         String topicFile = "topics";
 
         CommandLine cmd = buildCommandLineArguments(args);
-        indexDocumentsNew(indexPath, retrieveAnalyzer(cmd));
+        if(cmd.hasOption("create_index")) {
+            System.out.println("Indexing\n");
+            indexDocuments(indexPath, retrieveAnalyzer(cmd));
+            System.out.println();
+        }
 
+        System.out.println("Scoring\n");
         NewSearchIndex searchIndex = new NewSearchIndex(indexPath, retrieveAnalyzer(cmd),
                 retrieveSimilarity(cmd));
         searchIndex.searchQueryFile(topicFile, retrieveOutputLocation(cmd));
@@ -110,7 +82,7 @@ public class App {
 
         if(cmd.getOptionValue("analyzer") == null) {
             System.out.println("Using Custom Analyzer");
-            return new NewAnalyzer(stopWords);
+            return new NewAnalyzer(stopWords, NewAnalyzer.createSynonymMap());
         }
 
         switch(cmd.getOptionValue("analyzer").toLowerCase()) {
@@ -136,7 +108,7 @@ public class App {
                 return new StopAnalyzer(reader);
             case "custom":
                 System.out.println("Using Custom Analyzer");
-                return new NewAnalyzer(stopWords);
+                return new NewAnalyzer(stopWords, NewAnalyzer.createSynonymMap());
             default:
                 throw new RuntimeException("Analyzer name is invalid");
         }
@@ -180,6 +152,7 @@ public class App {
         options.addOption("analyzer", true, "analyzer choice");
         options.addOption("similarity", true, "similarity choice");
         options.addOption("output_location", true, "output location");
+        options.addOption(new Option("create_index", "create index, boolean option"));
 
         CommandLineParser parser = new DefaultParser();
 

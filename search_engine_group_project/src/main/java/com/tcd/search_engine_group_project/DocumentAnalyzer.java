@@ -26,13 +26,9 @@ public class DocumentAnalyzer {
         String stopwordsFolder = "resources/";
         String stopwordsFile = "stop_words.txt";
         Map<String, String> sargs = new HashMap<>();
-        
-        // sargs.put("synonyms", "/Users/owner/Desktop/search_engine_group/google_syns.txt");
-        sargs.put("synonyms", "/Users/owner/Desktop/search_engine_group/custom_syns.txt");
         sargs.put("ignoreCase", "true");
-        
-        // sargs.put("synonyms", "/Users/owner/Desktop/search_engine_group/search_engine_group_project/prolog/wn_s.pl");
-        // sargs.put("format", "wordnet");
+        sargs.put("synonyms", "/Users/owner/Desktop/search_engine_group/search_engine_group_project/prolog/wn_s.pl");
+        sargs.put("format", "wordnet");
 
         Set<String> stopWords;
         try (Stream<String> lines = Files.lines(Paths.get(stopwordsFolder + stopwordsFile))) {
@@ -40,31 +36,7 @@ public class DocumentAnalyzer {
         }
         CharArraySet stopWordsSet = CharArraySet.copy(stopWords);
 
-        /*return new StopwordAnalyzerBase() {
-            @Override
-            protected TokenStreamComponents createComponents(String field) {
-                Tokenizer tokenizer = new StandardTokenizer();
-
-                TokenStream filter = new TrimFilter(tokenizer);
-                filter = new LowerCaseFilter(filter);
-                filter = new StopFilter(filter, stopWordsSet);
-                filter = new SnowballFilter(filter, new EnglishStemmer());
-                filter = new LengthFilter(filter, 1, 15);
-                filter = new RemoveDuplicatesTokenFilter(filter);
-
-                return new TokenStreamComponents(tokenizer, filter);
-            }
-        };*/
-
         return CustomAnalyzer.builder(Paths.get(stopwordsFolder))
-                //.withTokenizer()
-                // .withTokenizer(
-                //     NGramTokenizerFactory.class,
-                //     new String[] {
-                //         "minGramSize", "1",
-                //         "maxGramSize", "3"
-                //     }
-                //     )
                 .withTokenizer("standard")
                     .addTokenFilter(EnglishPossessiveFilterFactory.class)
                     .addTokenFilter("trim")
@@ -75,8 +47,7 @@ public class DocumentAnalyzer {
                             "replace", "all",
                             "replacement", ""
                     )
-                    //.addTokenFilter(SynonymFilterFactory.class, sargs)
-                    //.addTokenFilter(SynonymGraphFilterFactory.class, sargs)
+                    .addTokenFilter(SynonymGraphFilterFactory.class, sargs)
                     .addTokenFilter("snowballPorter")
                     .build();
     }

@@ -78,8 +78,8 @@ public class NewSearchIndex {
                 Query descriptionQuery = queryParser.parse( QueryParser.escape(body));
 
                 BooleanQuery booleanQuery = new BooleanQuery.Builder()
-                        .add(new BoostQuery(titleQuery, 4f), BooleanClause.Occur.SHOULD)
-                        .add(new BoostQuery(descriptionQuery, 1.7f), BooleanClause.Occur.SHOULD)
+                        .add(new BoostQuery(titleQuery, 4.1f), BooleanClause.Occur.SHOULD)
+                        .add(new BoostQuery(descriptionQuery, 1.75f), BooleanClause.Occur.SHOULD)
                         .build();
 
 
