@@ -15,7 +15,7 @@ words = {}
 for i in file_content:
 	if random.choice([True, False]):
 		token_list.append(i.split(" "))
-		for word in model(i):
+		for word in model(i[:5000]):
 			if word.tag_ == "NN" or word.tag_ == "NNS" or word.tag_ == "NNP" or word.tag_ == "NNPS":
 				words["%s" % word] = "%s" % word
 		print(count)
