@@ -40,7 +40,7 @@ for i in model.wv.vocab.keys():
 		for sim in similar_words:
 			if sim[0] not in stopwords and not sim[0].isnumeric():
 				# if has_syns:
-				sims += ", "
+				sims += ":"
 				sims += str(sim[0]).strip().rstrip()
 				has_syns = True
 		if has_syns:
