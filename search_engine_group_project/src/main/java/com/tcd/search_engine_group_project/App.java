@@ -56,6 +56,7 @@ public class App {
         String topicFile = "topics";
 
         CommandLine cmd = buildCommandLineArguments(args);
+
         if(cmd.hasOption("create_index")) {
             System.out.println("Indexing\n");
             indexDocuments(indexPath, retrieveAnalyzer(cmd));
@@ -64,8 +65,29 @@ public class App {
 
         System.out.println("Scoring\n");
         NewSearchIndex searchIndex = new NewSearchIndex(indexPath, retrieveAnalyzer(cmd),
-                retrieveSimilarity(cmd), cmd.hasOption("use_word_frequencies"));
+                retrieveSimilarity(cmd), cmd.hasOption("use_word_frequencies"), cmd.hasOption("doc_2_vec"));
         searchIndex.searchQueryFile(topicFile, retrieveOutputLocation(cmd));
+    }
+
+    private static String retrieveSynonymsFileLocation(CommandLine cmd) {
+        if(!cmd.hasOption("wordnet")) {
+            System.out.println("Using Custom Wordnet");
+            return "/resources/syns.txt";
+        }
+
+        switch (cmd.getOptionValue("wordnet").toLowerCase()) {
+            case "google":
+                System.out.println("Using Wordnet from Google");
+                return "/wordnet/google_syns.txt";
+            case "document":
+                System.out.println("Using Wordnet from Documents");
+                return "/wordnet/custom_syns.txt";
+            case "custom":
+                System.out.println("Using Custom Wordnet");
+                return "/resources/syns.txt";
+        }
+
+        throw new RuntimeException("wordnet argument invalid");
     }
 
     private static String retrieveOutputLocation(CommandLine cmd) {
@@ -80,9 +102,15 @@ public class App {
                 Paths.get(System.getProperty("user.dir") + "/resources/stop_words.txt")
         );
 
+        if((cmd.getOptionValue("analyzer") == null || cmd.getOptionValue("analyzer").equals("custom")) &&
+                cmd.hasOption("wordnet") && cmd.getOptionValue("wordnet").equals("princeton")){
+            System.out.println("Using Custom Analyzer with Princeton Wordnet");
+            return NewAnalyzer.getPrincetonAnalyzer();
+        }
+
         if(cmd.getOptionValue("analyzer") == null) {
             System.out.println("Using Custom Analyzer");
-            return new NewAnalyzer(stopWords, NewAnalyzer.createSynonymMap());
+            return new NewAnalyzer(stopWords, NewAnalyzer.createSynonymMap(retrieveSynonymsFileLocation(cmd)));
         }
 
         switch(cmd.getOptionValue("analyzer").toLowerCase()) {
@@ -108,7 +136,7 @@ public class App {
                 return new StopAnalyzer(reader);
             case "custom":
                 System.out.println("Using Custom Analyzer");
-                return new NewAnalyzer(stopWords, NewAnalyzer.createSynonymMap());
+                return new NewAnalyzer(stopWords, NewAnalyzer.createSynonymMap(retrieveSynonymsFileLocation(cmd)));
             default:
                 throw new RuntimeException("Analyzer name is invalid");
         }
@@ -151,8 +179,10 @@ public class App {
         Options options = new Options();
         options.addOption("analyzer", true, "analyzer choice");
         options.addOption("similarity", true, "similarity choice");
+        options.addOption("wordnet", true, "wordnet choice for the custom analyzer");
         options.addOption("output_location", true, "output location");
         options.addOption(new Option("create_index", "create index, boolean option"));
+        options.addOption(new Option("doc_2_vec", "using doc2vec"));
         options.addOption(new Option("use_word_frequencies", "rank the documents also with word frequencies"));
 
         CommandLineParser parser = new DefaultParser();
