@@ -66,7 +66,7 @@ public class CustomDocumentAnalyzer extends StopwordAnalyzerBase {
         for(String synonym = synonyms.readLine(); synonym != null; synonym = synonyms.readLine()) {
             String[] syns = synonym.split(":");
             for(int i = 1; i < syns.length; i++) {
-                if(syns[i].equals(""))
+                if(syns[i].equals("") || syns[0].equals(""))
                     continue;
                 builder.add(new CharsRef(syns[0]), new CharsRef(syns[i]), true);
             }
