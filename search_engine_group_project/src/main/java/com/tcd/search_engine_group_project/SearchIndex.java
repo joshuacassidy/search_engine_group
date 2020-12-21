@@ -22,7 +22,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
-public class NewSearchIndex {
+public class SearchIndex {
     private boolean useWordFrequencies;
     private boolean useDoc2Vec;
     private Analyzer analyzer;
@@ -30,8 +30,8 @@ public class NewSearchIndex {
     private Similarity similarity;
     private Map<String, Float> documentCategoryScores;
 
-    public NewSearchIndex(String indexPath, Analyzer analyzer, Similarity similarity,
-                          boolean useWordFrequencies, boolean useDoc2Vec) {
+    public SearchIndex(String indexPath, Analyzer analyzer, Similarity similarity,
+                       boolean useWordFrequencies, boolean useDoc2Vec) {
         this.indexPath = indexPath;
         documentCategoryScores = new HashMap<>();
         documentCategoryScores.put("title", 0.1f);

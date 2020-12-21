@@ -28,13 +28,13 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 
-public class NewDocumentIndexer {
+public class DocumentIndexer {
     private Path documentsDirectory;
     private IndexWriter indexWriter;
     private Map<String, List<String>> documentFieldsMap;
     private List<String> fr94Removal;
 
-    public NewDocumentIndexer(String documentsDirectory,
+    public DocumentIndexer(String documentsDirectory,
                            IndexWriter indexWriter,
                            Map<String, List<String>> documentFieldsMap) {
         this.documentsDirectory = Paths.get(documentsDirectory);

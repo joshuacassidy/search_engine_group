@@ -26,11 +26,11 @@ import java.io.IOException;
 import java.util.Map;
 
 
-public class NewAnalyzer extends StopwordAnalyzerBase {
+public class CustomDocumentAnalyzer extends StopwordAnalyzerBase {
     List<String> stopWords;
     SynonymMap synonymMap;
 
-    public NewAnalyzer(List<String> stopWords, SynonymMap synonymMap) {
+    public CustomDocumentAnalyzer(List<String> stopWords, SynonymMap synonymMap) {
         this.stopWords = stopWords;
         this.synonymMap = synonymMap;
     }
@@ -83,7 +83,7 @@ public class NewAnalyzer extends StopwordAnalyzerBase {
         sargs.put("synonyms", System.getProperty("user.dir") + "/prolog/wn_s.pl");
         sargs.put("format", "wordnet");
 
-        return CustomAnalyzer.builder(Paths.get(stopwordsFolder))
+        return org.apache.lucene.analysis.custom.CustomAnalyzer.builder(Paths.get(stopwordsFolder))
                 .withTokenizer("standard")
                 .addTokenFilter(EnglishPossessiveFilterFactory.class)
                 .addTokenFilter("trim")

@@ -33,16 +33,16 @@ public class App {
         Directory indexSaveDirectory = FSDirectory.open(Paths.get(indexPath));
         IndexWriter indexWriter = new IndexWriter(indexSaveDirectory, indexWriterConfig);
 
-        NewDocumentIndexer ftParser = new NewDocumentIndexer(ftLocation, indexWriter,
+        DocumentIndexer ftParser = new DocumentIndexer(ftLocation, indexWriter,
                 DocumentIndexerMaps.FT_MAP);
         ftParser.indexAllDocumentsInFolder();
-        NewDocumentIndexer frParser = new NewDocumentIndexer(frLocation, indexWriter,
+        DocumentIndexer frParser = new DocumentIndexer(frLocation, indexWriter,
                 DocumentIndexerMaps.FR_MAP);
         frParser.indexAllDocumentsInFolder();
-        NewDocumentIndexer fbisParser = new NewDocumentIndexer(fbisLocation, indexWriter,
+        DocumentIndexer fbisParser = new DocumentIndexer(fbisLocation, indexWriter,
                 DocumentIndexerMaps.FBIS_MAP);
         fbisParser.indexAllDocumentsInFolder();
-        NewDocumentIndexer laTimesParser = new NewDocumentIndexer(laTimesLocation, indexWriter,
+        DocumentIndexer laTimesParser = new DocumentIndexer(laTimesLocation, indexWriter,
                 DocumentIndexerMaps.LA_TIMES_MAP);
         laTimesParser.indexAllDocumentsInFolder();
 
@@ -64,7 +64,7 @@ public class App {
         }
 
         System.out.println("Scoring\n");
-        NewSearchIndex searchIndex = new NewSearchIndex(indexPath, retrieveAnalyzer(cmd),
+        SearchIndex searchIndex = new SearchIndex(indexPath, retrieveAnalyzer(cmd),
                 retrieveSimilarity(cmd), cmd.hasOption("use_word_frequencies"), cmd.hasOption("doc_2_vec"));
         searchIndex.searchQueryFile(topicFile, retrieveOutputLocation(cmd));
     }
@@ -105,12 +105,12 @@ public class App {
         if((cmd.getOptionValue("analyzer") == null || cmd.getOptionValue("analyzer").equals("custom")) &&
                 cmd.hasOption("wordnet") && cmd.getOptionValue("wordnet").equals("princeton")){
             System.out.println("Using Custom Analyzer with Princeton Wordnet");
-            return NewAnalyzer.getPrincetonAnalyzer();
+            return CustomDocumentAnalyzer.getPrincetonAnalyzer();
         }
 
         if(cmd.getOptionValue("analyzer") == null) {
             System.out.println("Using Custom Analyzer");
-            return new NewAnalyzer(stopWords, NewAnalyzer.createSynonymMap(retrieveSynonymsFileLocation(cmd)));
+            return new CustomDocumentAnalyzer(stopWords, CustomDocumentAnalyzer.createSynonymMap(retrieveSynonymsFileLocation(cmd)));
         }
 
         switch(cmd.getOptionValue("analyzer").toLowerCase()) {
@@ -136,7 +136,7 @@ public class App {
                 return new StopAnalyzer(reader);
             case "custom":
                 System.out.println("Using Custom Analyzer");
-                return new NewAnalyzer(stopWords, NewAnalyzer.createSynonymMap(retrieveSynonymsFileLocation(cmd)));
+                return new CustomDocumentAnalyzer(stopWords, CustomDocumentAnalyzer.createSynonymMap(retrieveSynonymsFileLocation(cmd)));
             default:
                 throw new RuntimeException("Analyzer name is invalid");
         }
