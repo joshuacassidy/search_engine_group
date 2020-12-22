@@ -116,8 +116,8 @@ public class SearchIndex {
             List<Float> doc2VecScores = pythonAPIManager.scoreTextsWithDoc2Vec(title + body, texts);
             for (int i = 0; i < Math.min(results.totalHits.value, resultsToConsider); i++) {
                 org.apache.lucene.document.Document doc = documents.get(i);
-                float doc2VecScore = 20 * doc2VecScores.get(i);
-                scores.put(doc, scores.get(doc) * 0.8f + doc2VecScore);
+                float doc2VecScore = 25 * doc2VecScores.get(i);
+                scores.put(doc, scores.get(doc) + doc2VecScore);
             }
         }
 
