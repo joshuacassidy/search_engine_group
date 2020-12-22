@@ -2,6 +2,9 @@
 In this project we have a search engine that uses Lucene.
 ## Building and Executing
 
+Before building and executing, be sure to download the datasets here: https://drive.google.com/file/d/17KpMCaE34eLvdiTINqj1lmxSBSu8BtDP/view and extract it.
+Put the "fbis", "ft", "fr94", and "latimes" folders inside the datasets folder in the search_engine_group_project folder.
+
 You can compile and run (for the best results) the java code from the 'search_engine_group_project' folder using the command:
 ```sh
 mvn package && java -jar target/search_engine_group_project-1.0-SNAPSHOT.jar -use_word_frequencies -create_index
@@ -38,6 +41,17 @@ Once that is done, you will be able to get the document wordnet in this way (sam
 
 And the google wordnet in this way (same folder as before):
 ```python wordnet/google_wordnet.py```
+To do that, you will need to download the word2vec model from google here: 
+
+### Using word frequencies and doc2vec
+
+To use word frequencies and doc2vec to score, you will need to run the python server in your machine.
+
+### Python Server
+
+To enable the python server, you will need to use the ```command python flask-server/app.py```.
+In order to run this command though, you will need to download the pretrained doc2vec model here: https://ibm.ent.box.com/s/3f160t4xpuya9an935k84ig465gvymm2
+Once downloaded, put the 3 doc2vec.bin files into the doc2vec folder.
 
 ## Evaluating
 
