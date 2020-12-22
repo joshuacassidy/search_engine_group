@@ -7,7 +7,7 @@ Put the "fbis", "ft", "fr94", and "latimes" folders inside the datasets folder i
 
 You can compile and run (for the best results) the java code from the 'search_engine_group_project' folder using the command:
 ```sh
-mvn package && java -jar target/search_engine_group_project-1.0-SNAPSHOT.jar -use_word_frequencies -create_index
+mvn package && java -jar target/search_engine_group_project-1.0-SNAPSHOT.jar -use_word_frequencies -create_index -doc_2_vec
 ```
 
 ### CLI Parameters
