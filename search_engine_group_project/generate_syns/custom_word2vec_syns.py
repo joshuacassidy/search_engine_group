@@ -34,7 +34,7 @@ model = Word2Vec(
 
 syns.close()
 
-custom_syns = open("generate_syns/pos_custom_syns_py.txt","w+") 
+custom_syns = open("generate_syns/custom_syns_py_sample.txt","w+") 
 
 stopwords = []
 with open("resources/stop_words.txt", "r", encoding="utf-8") as f:
