@@ -103,3 +103,8 @@ Student Number: 20301611
 
 Name: Min Wu
 Student Number: 20302508
+
+### Graph
+
+Graphs are available to show the performances of the different analyzers using bm25, and of the best analyzer(Custom) using the different similarities.
+go to the output folder and execute ```python3 graph.py``` to get the images in the output folder.
