@@ -20,7 +20,7 @@ The default values is ```custom```.
 ```axiomatic```, ```bm25```, ```boolean```, ```classic```, ```dfis```, ```lmd```, ```lmjm```.
 The default values is ```bm25```.
 - ```-wordnet``` this parameter let you choose which wordnet you want to use (only applicable to custom analyzers, otherwise this parameter is ignored)
- and can have the following values: ```princeton```, ```google```, ```document```, ```document_POS```, ```custom```.
+ and can have the following values: ```princeton```, ```google```, ```document```, ```document-pos```, ```custom```.
 The default values is ```custom```.
 - ```-output_location``` this parameter let you choose the output directory and file name of the result of the scoring, the default is ```"output/output.txt"```.
 
