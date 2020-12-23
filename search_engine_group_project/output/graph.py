@@ -21,11 +21,11 @@ def percision_recall_curve(plot_name, include_files, visualise_scoring_approach)
             f = open("trec_eval_outputs/%s" % filename, "r")
             data = f.read().strip()
             f.close()
-            if visualise_scoring_approach:
+            if not visualise_scoring_approach:
                 analyzer = filename.split("_")[-1].split(".")[0]
             else: 
                 analyzer = filename.split("_")[0]
-
+            
             recall_keys = [
                 "iprec_at_recall_0.00",
                 "iprec_at_recall_0.10",
@@ -44,9 +44,9 @@ def percision_recall_curve(plot_name, include_files, visualise_scoring_approach)
             percision = []
             for i in data.split("\n"):
                 record = i.split("\t")
-                if record[0].strip() in recall_keys:
+                if i.split(" ")[0].strip() in recall_keys:
                     percision.append(float(record[-1]))
-                    recall.append(float(record[0].split("iprec_at_recall_")[1].strip()))
+                    recall.append(float(i.split(" ")[0].split("iprec_at_recall_")[1].strip()))
 
             plt.plot(percision, recall, label = analyzer)
             
