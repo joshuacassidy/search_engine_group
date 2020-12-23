@@ -18,7 +18,6 @@ def percision_recall_curve(plot_name, include_files, visualise_scoring_approach)
 
     for filename in os.listdir("trec_eval_outputs/"):
         if include_files in filename:
-            print(include_files)
             f = open("trec_eval_outputs/%s" % filename, "r")
             data = f.read().strip()
             f.close()
@@ -26,8 +25,6 @@ def percision_recall_curve(plot_name, include_files, visualise_scoring_approach)
                 analyzer = filename.split("_")[-1].split(".")[0]
             else: 
                 analyzer = filename.split("_")[0]
-                
-            print(data)
 
             recall_keys = [
                 "iprec_at_recall_0.00",
