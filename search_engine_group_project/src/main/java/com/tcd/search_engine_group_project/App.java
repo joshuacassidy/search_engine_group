@@ -78,10 +78,13 @@ public class App {
         switch (cmd.getOptionValue("wordnet").toLowerCase()) {
             case "google":
                 System.out.println("Using Wordnet from Google");
-                return "/wordnet/google_syns.txt";
+                return "/generate_syns/google_syns.txt";
+            case "document_POS":
+                System.out.println("Using Wordnet from Documents POS");
+                return "/generate_syns/pos_custom_syns_py.txt";
             case "document":
                 System.out.println("Using Wordnet from Documents");
-                return "/wordnet/custom_syns.txt";
+                return "/generate_syns/custom_syns_py_sample.txt";
             case "custom":
                 System.out.println("Using Custom Wordnet");
                 return "/resources/syns.txt";

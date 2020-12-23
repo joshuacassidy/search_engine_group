@@ -20,7 +20,7 @@ The default values is ```custom```.
 ```axiomatic```, ```bm25```, ```boolean```, ```classic```, ```dfis```, ```lmd```, ```lmjm```.
 The default values is ```bm25```.
 - ```-wordnet``` this parameter let you choose which wordnet you want to use (only applicable to custom analyzers, otherwise this parameter is ignored)
- and can have the following values: ```princeton```, ```google```, ```document```, ```custom```.
+ and can have the following values: ```princeton```, ```google```, ```document```, ```document_POS```, ```custom```.
 The default values is ```custom```.
 - ```-output_location``` this parameter let you choose the output directory and file name of the result of the scoring, the default is ```"output/output.txt"```.
 
@@ -34,14 +34,16 @@ We also have 3 flags:
 To use the ```google``` or ```document``` wordnet, you will need to run some commands:
 
 The first one is needed to extract the words from all the documents. From the search_engine_group_project folder, run:
-```python wordnet/store_words.py```
+```python generate_syns/store_words.py```
+
+Once that is done, you will be able to get the document POS wordnet in this way (same folder as before):
+```python generate_syns/custom_word2vec_pos_syns.py```
 
 Once that is done, you will be able to get the document wordnet in this way (same folder as before):
-```python wordnet/main.py```
+```python generate_syns/custom_word2vec_syns.py```
 
 And the google wordnet in this way (same folder as before):
-```python wordnet/google_wordnet.py```
-To do that, you will need to download the word2vec model from google here: 
+```python generate_syns/google_word2vec_syns.py```
 
 ### Using word frequencies and doc2vec
 
