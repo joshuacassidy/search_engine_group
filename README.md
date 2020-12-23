@@ -53,7 +53,7 @@ To use word frequencies and doc2vec to score, you will need to run the python se
 
 ### Python Server
 
-To enable the python server, you will need to use the command ```python flask-server/app.py```.
+To enable the python server, you will need to use the command ```python3 flask-server/app.py```.
 In order to run this command though, you will need to download the pretrained doc2vec model here: https://ibm.ent.box.com/s/3f160t4xpuya9an935k84ig465gvymm2
 Once downloaded, put the 3 doc2vec.bin files into the doc2vec folder.
 
