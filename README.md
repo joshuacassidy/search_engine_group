@@ -75,9 +75,31 @@ To evaluate the software using trec eval, use this code:
 ## Project Dependencies:
 1. Java (Version 8 or greater)
 2. Maven (Version 3.6.0)
-3. Bash (Version 3.2)
+3. Python3 (Note: ensure you have python mapped to the python3 environment variable and specific version of all the Python dependencies can be found in requirements.txt)
+4. Matplotlib (Note: ensure that your operating system is able to use the TKAgg function)
+5. pip (Note: ensure you have pip mapped to the pip3 environment variable)
+6. Bash (Version 3.2)
 
 ## Notes
 1. The output.txt contains the output of the search engine
 2. Remove the contents of the index folder before running as the hosted instance is limited on space
 3. The output.txt uses the topic number in the first column, and the document number in the third column
+
+## Project
+
+MSc Computer Science - Intelligent Systems
+Module: CS7IS3 INFORMATION RETRIEVAL AND WEB SEARCH
+
+### Students
+
+Name: Joshua Cassidy
+Student Number: 20300057
+
+Name: Matteo Bresciani
+Student Number: 20309566
+
+Name: Xuechun Wang
+Student Number: 20301611
+
+Name: Min Wu
+Student Number: 20302508
