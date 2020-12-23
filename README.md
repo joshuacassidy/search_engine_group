@@ -44,6 +44,8 @@ Once that is done, you will be able to get the document wordnet in this way (sam
 
 And the google wordnet in this way (same folder as before):
 ```python generate_syns/google_word2vec_syns.py```
+Also, to run the google wordnet, you will need to download the pretrained word2vec model here: https://code.google.com/archive/p/word2vec/
+Once donwloaded, extract the content into the generate_syns folder, that you can find in the search_engine_group_project folder.
 
 ### Using word frequencies and doc2vec
 
