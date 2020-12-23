@@ -79,7 +79,7 @@ public class App {
             case "google":
                 System.out.println("Using Wordnet from Google");
                 return "/generate_syns/google_syns.txt";
-            case "document_POS":
+            case "documentPOS":
                 System.out.println("Using Wordnet from Documents POS");
                 return "/generate_syns/pos_custom_syns_py.txt";
             case "document":
